@@ -2,7 +2,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
     Image,
     ImageBackground,
     KeyboardAvoidingView,
@@ -24,6 +23,7 @@ export default function SignIn() {
     const [loading, setLoading] = useState(false);
 
     // Handle sign in
+    {/*
     const handleSignIn = async () => {
         // Validate input
         if (!email.trim()) {
@@ -67,6 +67,11 @@ export default function SignIn() {
             setLoading(false);
         }
     };
+*/}
+
+    const handleSignIn = async () => {
+        router.push('/(tabs)/homeScreen');
+    }
 
     return (
         <KeyboardAvoidingView
