@@ -15,6 +15,8 @@ import {
     View
 } from 'react-native';
 import Button from '../../components/Button/button';
+import { resetPassword } from "../../services/authService";
+
 
 export default function SignIn() {
     const router = useRouter();
@@ -23,51 +25,81 @@ export default function SignIn() {
     const [loading, setLoading] = useState(false);
 
     // Handle sign in
-    {/*
-    const handleSignIn = async () => {
-        // Validate input
+    /*
+        const handleSignIn = async () => {
+            // Validate input
+            if (!email.trim()) {
+                Alert.alert("Error", "Please enter your email");
+                return;
+            }
+    
+            if (!password) {
+                Alert.alert("Error", "Please enter your password");
+                return;
+            }
+    
+            setLoading(true);
+    
+            try {
+                // Uncomment and implement your authentication logic here
+                await loginUser(email, password);
+    
+                // For now, simulate successful login and navigate
+                console.log("Login attempt with:", email, password);
+    
+                // Navigate to tabs after successful login
+                router.push('/(tabs)');
+    
+            } catch (error) {
+                console.error("Login error:", error);
+    
+                // Handle specific error codes
+                let errorMessage = "Failed to sign in. Please check your credentials and try again.";
+    
+                if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Invalid email address.";
+                } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "Incorrect email or password.";
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = "Too many failed sign in attempts. Please try again later.";
+                }
+    
+                Alert.alert("Sign In Failed", errorMessage);
+            } finally {
+                setLoading(false);
+            }
+        };
+        */
+
+
+
+    // Handle forgot password
+    const handleForgotPassword = async () => {
         if (!email.trim()) {
-            Alert.alert("Error", "Please enter your email");
+            Alert.alert("Error", "Please enter your email to reset password");
             return;
         }
-
-        if (!password) {
-            Alert.alert("Error", "Please enter your password");
-            return;
-        }
-
-        setLoading(true);
 
         try {
-            // Uncomment and implement your authentication logic here
-            // await loginUser(email, password);
-
-            // For now, simulate successful login and navigate
-            console.log("Login attempt with:", email, password);
-
-            // Navigate to tabs after successful login
-            router.push('/(tabs)');
-
+            await resetPassword(email.trim());
+            Alert.alert(
+                "Password Reset Email Sent",
+                "Check your email for instructions to reset your password"
+            );
         } catch (error) {
-            console.error("Login error:", error);
+            console.error("Password reset error:", error);
 
-            // Handle specific error codes
-            let errorMessage = "Failed to sign in. Please check your credentials and try again.";
-
+            let errorMessage = "Failed to send password reset email.";
             if (error.code === 'auth/invalid-email') {
                 errorMessage = "Invalid email address.";
-            } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                errorMessage = "Incorrect email or password.";
-            } else if (error.code === 'auth/too-many-requests') {
-                errorMessage = "Too many failed sign in attempts. Please try again later.";
+            } else if (error.code === 'auth/user-not-found') {
+                errorMessage = "No account found with this email.";
             }
 
-            Alert.alert("Sign In Failed", errorMessage);
-        } finally {
-            setLoading(false);
+            Alert.alert("Error", errorMessage);
         }
     };
-*/}
+
 
     const handleSignIn = async () => {
         router.push('/(tabs)/homeScreen');
@@ -133,6 +165,14 @@ export default function SignIn() {
                                 onChangeText={setPassword}
                                 value={password}
                             />
+
+                            {/* Forgot Password */}
+                            <TouchableOpacity
+                                onPress={handleForgotPassword}
+                                style={styles.forgotPasswordContainer}
+                            >
+                                <Text style={styles.forgotPassword}>Forgot Password?</Text>
+                            </TouchableOpacity>
 
 
                             <Button
@@ -234,4 +274,11 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 15
     },
+    forgotPasswordContainer: {
+        alignItems: 'flex-end',
+        width: '90%'
+    },
+    forgotPassword: {
+        color: '#fff'
+    }
 });
