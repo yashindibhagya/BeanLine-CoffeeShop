@@ -160,9 +160,6 @@ const HomeScreen = () => {
             <Text style={styles.itemsSectionTitle}>
               {categories.find(cat => cat.id === selectedCategory)?.title}
             </Text>
-            <Text style={styles.itemsCount}>
-              {selectedCategoryItems.length} items
-            </Text>
           </View>
 
           {selectedCategoryItems.length > 0 ? (
@@ -345,10 +342,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-  },
-  itemsCount: {
-    fontSize: 14,
-    color: '#ccc',
   },
   itemsContainer: {
     paddingBottom: 20,

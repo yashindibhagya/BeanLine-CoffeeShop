@@ -4,7 +4,7 @@ export const hotCoffeeItems = [
     name: "Espresso",
     description: "Rich and bold espresso shot made from premium coffee beans",
     price: 2.50,
-    image: require('../../../assets/images/coffee.jpg'),
+    image: require('../../../assets/images/hotCoffee/Espresso.jpg'),
     category: "1",
     rating: 4.8,
     preparationTime: "2-3 mins",
@@ -17,7 +17,7 @@ export const hotCoffeeItems = [
     name: "Cappuccino",
     description: "Creamy cappuccino with perfectly steamed milk and foam art",
     price: 3.75,
-    image: require('../../../assets/images/coffee.jpg'),
+    image: require('../../../assets/images/hotCoffee/cappuccino.jpg'),
     category: "1",
     rating: 4.9,
     preparationTime: "4-5 mins",
@@ -30,7 +30,7 @@ export const hotCoffeeItems = [
     name: "Latte",
     description: "Smooth latte with silky steamed milk and beautiful latte art",
     price: 4.25,
-    image: require('../../../assets/images/coffee.jpg'),
+    image: require('../../../assets/images/hotCoffee/latte.jpg'),
     category: "1",
     rating: 4.7,
     preparationTime: "4-5 mins",
@@ -43,7 +43,7 @@ export const hotCoffeeItems = [
     name: "Americano",
     description: "Classic americano - espresso shots with hot water",
     price: 3.00,
-    image: require('../../../assets/images/coffee.jpg'),
+    image: require('../../../assets/images/hotCoffee/Americano.jpg'),
     category: "1",
     rating: 4.5,
     preparationTime: "3-4 mins",
@@ -51,17 +51,4 @@ export const hotCoffeeItems = [
     size: ["Small", "Medium", "Large"],
     calories: 10
   },
-  {
-    id: "hc5",
-    name: "Mocha",
-    description: "Rich chocolate coffee blend with whipped cream",
-    price: 4.75,
-    image: require('../../../assets/images/coffee.jpg'),
-    category: "1",
-    rating: 4.6,
-    preparationTime: "5-6 mins",
-    ingredients: ["Espresso", "Chocolate Syrup", "Steamed Milk", "Whipped Cream"],
-    size: ["Small", "Medium", "Large"],
-    calories: 250
-  }
 ];
