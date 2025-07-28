@@ -1,5 +1,6 @@
 import coffee from "../assets/images/1.jpg";
 import backgroundImage from "../assets/images/coffee.jpg";
+import header from "../assets/images/Intersect.png";
 
 export const CATEGORIES: { id: string; name: string }[] = [
     {
@@ -78,7 +79,12 @@ export const toppings = [
     },
 ]
 
+export const images = [
+    header
+]
+
 export default {
     backgroundImage,
-    coffee
+    coffee,
+    header
 }

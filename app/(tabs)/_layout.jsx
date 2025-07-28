@@ -7,6 +7,8 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -45,14 +47,14 @@ export default function TabLayout() {
         name="favoriteScreen"
         options={{
           title: 'Favourite',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => <AntDesign name="heart" size={24} color="color" />,
         }}
       />
       <Tabs.Screen
         name="orderHistory"
         options={{
           title: 'History',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome name="shopping-cart" size={24} color="color" />,
         }}
       />
     </Tabs>
