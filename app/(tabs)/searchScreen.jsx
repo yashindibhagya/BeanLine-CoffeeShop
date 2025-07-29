@@ -83,17 +83,6 @@ export default function SidebarCategories() {
 
                 {/* Content */}
                 <View style={styles.content}>
-                    <View style={styles.header}>
-                        <View style={styles.headerTitle}>
-                            <View style={styles.headerEmojiCircle}>
-                                <Text style={styles.headerEmoji}>
-                                    {items[0]?.image || '🍽️'}
-                                </Text>
-                            </View>
-                            <Text style={styles.headerText}>{title}</Text>
-                        </View>
-                        <MaterialIcons name="filter-list" size={24} color="#888" />
-                    </View>
 
                     {/* Search Input (always visible) */}
                     <TextInput
@@ -108,14 +97,17 @@ export default function SidebarCategories() {
                         data={items}
                         numColumns={2}
                         keyExtractor={(item) => item.id}
-                        columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 12 }}
+                        columnWrapperStyle={styles.grid}
                         contentContainerStyle={styles.itemsList}
                         renderItem={({ item }) => (
-                            <ItemCard
-                                item={item}
-                                onPress={() => console.log('Pressed:', item.name)}
-                                onAddPress={() => console.log('Add to cart:', item.name)}
-                            />
+                            <View style={styles.cardContainer}>
+                                <ItemCard
+                                    item={item}
+                                    onPress={() => console.log('Pressed:', item.name)}
+                                    onAddPress={() => console.log('Add to cart:', item.name)}
+                                    style={styles.card}
+                                />
+                            </View>
                         )}
                     />
 
@@ -166,7 +158,7 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        padding: 16,
+        padding: 14,
     },
     header: {
         flexDirection: 'row',
@@ -210,61 +202,59 @@ const styles = StyleSheet.create({
     },
     grid: {
         justifyContent: 'space-between',
+        marginBottom: 12,
+        paddingHorizontal: 4,
+    },
+    cardContainer: {
+        width: (width - 30 - 38) / 2 - 4, // Available width minus sidebar, padding, and gap
+        maxWidth: 100, // Maximum width to prevent cards from being too wide
     },
     card: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 16,
-        width: (width - 70 - 48) / 2,
-        shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        elevation: 2,
+
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 12,
+        marginBottom: 8,
     },
     emoji: {
-        fontSize: 32,
+        fontSize: 28, // Reduced from 32
     },
     statusDotOuter: {
-        width: 24,
-        height: 24,
-        borderRadius: 12,
+        width: 20, // Reduced from 24
+        height: 20,
+        borderRadius: 10,
         backgroundColor: '#D1FAE5',
         alignItems: 'center',
         justifyContent: 'center',
     },
     statusDotInner: {
-        width: 8,
-        height: 8,
-        borderRadius: 4,
+        width: 6, // Reduced from 8
+        height: 6,
+        borderRadius: 3,
         backgroundColor: '#22C55E',
     },
     cardTitle: {
         fontWeight: '600',
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         color: '#1F2937',
-        marginBottom: 4,
+        marginBottom: 3,
     },
     cardDesc: {
-        fontSize: 12,
+        fontSize: 11, // Reduced from 12
         color: '#6B7280',
-        marginBottom: 8,
+        marginBottom: 6,
+        lineHeight: 14,
     },
     tags: {
         flexDirection: 'row',
-        gap: 6,
-        marginBottom: 8,
+        gap: 4,
+        marginBottom: 6,
     },
     tag: {
-        fontSize: 10,
+        fontSize: 9, // Reduced from 10
         color: '#9CA3AF',
-        marginRight: 10,
+        marginRight: 8,
     },
     cardFooter: {
         flexDirection: 'row',
@@ -272,14 +262,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     price: {
-        fontSize: 16,
+        fontSize: 14, // Reduced from 16
         fontWeight: 'bold',
         color: '#111827',
     },
     addButton: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
+        width: 28, // Reduced from 32
+        height: 28,
+        borderRadius: 14,
         backgroundColor: '#22C55E',
         alignItems: 'center',
         justifyContent: 'center',
