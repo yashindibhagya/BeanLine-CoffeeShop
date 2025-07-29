@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
     Dimensions,
     FlatList,
+    SafeAreaView,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -36,96 +37,104 @@ export default function SidebarCategories() {
     const title = categories.find((cat) => cat.id === selectedCategory)?.title;
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+            <StatusBar backgroundColor="#D0F3DA" barStyle="dark-content" />
+            <View style={styles.container}>
 
-            {/* Sidebar */}
-            <View style={styles.sidebar}>
-                <ScrollView
-                    contentContainerStyle={[
-                        styles.sidebarIcons,
-                        { paddingTop: STATUS_BAR_HEIGHT, paddingBottom: 80 }, // reserve for navbar
-                    ]}
-                    showsVerticalScrollIndicator={false}
-                >
-                    {categories.map((cat) => (
-                        <TouchableOpacity
-                            key={cat.id}
-                            onPress={() => handleCategorySelect(cat.id)}
-                            style={[
-                                styles.categoryIcon,
-                                selectedCategory === cat.id && styles.activeCategoryIcon,
-                            ]}
-                        >
-                            <View style={styles.iconWrapper}>
-                                <MaterialIcons
-                                    name={cat.icon}
-                                    size={24}
-                                    style={styles.icon}
-                                    color={selectedCategory === cat.id ? '#8A4B23' : '#fff'}
-                                />
-                                <Text
-                                    style={[
-                                        styles.iconText,
-                                        selectedCategory === cat.id && styles.activeIconText,
-                                    ]}
-                                >
-                                    {cat.title}
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                {/* Sidebar */}
+                <View style={styles.sidebar}>
+                    <ScrollView
+                        contentContainerStyle={[
+                            styles.sidebarIcons,
+                            { paddingTop: STATUS_BAR_HEIGHT, paddingBottom: 80 }, // reserve for navbar
+                        ]}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        {categories.map((cat) => (
+                            <TouchableOpacity
+                                key={cat.id}
+                                onPress={() => handleCategorySelect(cat.id)}
+                                style={[
+                                    styles.categoryIcon,
+                                    selectedCategory === cat.id && styles.activeCategoryIcon,
+                                ]}
+                            >
+                                <View style={styles.iconWrapper}>
+                                    <MaterialIcons
+                                        name={cat.icon}
+                                        size={24}
+                                        style={styles.icon}
+                                        color={selectedCategory === cat.id ? '#8A4B23' : '#fff'}
+                                    />
+                                    <Text
+                                        style={[
+                                            styles.iconText,
+                                            selectedCategory === cat.id && styles.activeIconText,
+                                        ]}
+                                    >
+                                        {cat.title}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
 
-            </View>
-
-            {/* Content */}
-            <View style={styles.content}>
-                <View style={styles.header}>
-                    <View style={styles.headerTitle}>
-                        <View style={styles.headerEmojiCircle}>
-                            <Text style={styles.headerEmoji}>
-                                {items[0]?.image || '🍽️'}
-                            </Text>
-                        </View>
-                        <Text style={styles.headerText}>{title}</Text>
-                    </View>
-                    <MaterialIcons name="filter-list" size={24} color="#888" />
                 </View>
 
-                {/* Search Input (always visible) */}
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Search items..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                />
+                {/* Content */}
+                <View style={styles.content}>
+                    <View style={styles.header}>
+                        <View style={styles.headerTitle}>
+                            <View style={styles.headerEmojiCircle}>
+                                <Text style={styles.headerEmoji}>
+                                    {items[0]?.image || '🍽️'}
+                                </Text>
+                            </View>
+                            <Text style={styles.headerText}>{title}</Text>
+                        </View>
+                        <MaterialIcons name="filter-list" size={24} color="#888" />
+                    </View>
 
-                {/* Grid */}
-                <FlatList
-                    data={items}
-                    numColumns={2}
-                    keyExtractor={(item) => item.id}
-                    columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 12 }}
-                    contentContainerStyle={styles.itemsList}
-                    renderItem={({ item }) => (
-                        <ItemCard
-                            item={item}
-                            onPress={() => console.log('Pressed:', item.name)}
-                            onAddPress={() => console.log('Add to cart:', item.name)}
-                        />
-                    )}
-                />
+                    {/* Search Input (always visible) */}
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Search items..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                    />
 
+                    {/* Grid */}
+                    <FlatList
+                        data={items}
+                        numColumns={2}
+                        keyExtractor={(item) => item.id}
+                        columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 12 }}
+                        contentContainerStyle={styles.itemsList}
+                        renderItem={({ item }) => (
+                            <ItemCard
+                                item={item}
+                                onPress={() => console.log('Pressed:', item.name)}
+                                onAddPress={() => console.log('Add to cart:', item.name)}
+                            />
+                        )}
+                    />
+
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#D0F3DA",
+    },
     container: {
         flex: 1,
         flexDirection: 'row',
-        backgroundColor: '#F9FAFB',
+        backgroundColor: '#000',
+        paddingTop: STATUS_BAR_HEIGHT,
     },
     sidebar: {
         width: 70,
@@ -137,18 +146,20 @@ const styles = StyleSheet.create({
     },
     sidebarIcons: {
         alignItems: 'center',
+
     },
     categoryIcon: {
         width: 50,
-        borderRadius: 25,
+        height: 100,
+        borderRadius: 24,
         borderWidth: 1,
         borderColor: '#fff',
         backgroundColor: '#8A4B23',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 16,
-        paddingVertical: 8, // Small padding for touch area
-        paddingHorizontal: 4,
+        paddingVertical: 8,
+
     },
     activeCategoryIcon: {
         backgroundColor: '#fff',
@@ -276,18 +287,18 @@ const styles = StyleSheet.create({
     iconWrapper: {
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 4, // Reduced gap between icon and text
+        gap: 14,
     },
     categoryIconStyle: {
         transform: [{ rotate: '-90deg' }],
     },
     iconText: {
+        marginTop: 6,
         fontSize: 10,
         color: '#fff',
         transform: [{ rotate: '-90deg' }],
         textAlign: 'center',
         width: 60,
-        lineHeight: 12, // Tight line height for compact text
     },
     activeIconText: {
         color: '#8A4B23',
