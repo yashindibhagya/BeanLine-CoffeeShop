@@ -137,20 +137,18 @@ const styles = StyleSheet.create({
     },
     sidebarIcons: {
         alignItems: 'center',
-
     },
     categoryIcon: {
         width: 50,
-        height: 100,
-        borderRadius: 24,
+        borderRadius: 25,
         borderWidth: 1,
         borderColor: '#fff',
         backgroundColor: '#8A4B23',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 16,
-        paddingVertical: 8,
-
+        paddingVertical: 8, // Small padding for touch area
+        paddingHorizontal: 4,
     },
     activeCategoryIcon: {
         backgroundColor: '#fff',
@@ -278,18 +276,18 @@ const styles = StyleSheet.create({
     iconWrapper: {
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 14,
+        gap: 4, // Reduced gap between icon and text
     },
     categoryIconStyle: {
         transform: [{ rotate: '-90deg' }],
     },
     iconText: {
-        marginTop: 6,
         fontSize: 10,
         color: '#fff',
         transform: [{ rotate: '-90deg' }],
         textAlign: 'center',
         width: 60,
+        lineHeight: 12, // Tight line height for compact text
     },
     activeIconText: {
         color: '#8A4B23',
