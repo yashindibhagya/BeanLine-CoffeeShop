@@ -100,7 +100,7 @@ const HomeScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="light-content" backgroundColor='#000' />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
@@ -221,10 +221,10 @@ const styles = StyleSheet.create({
     paddingTop: 20, // adjust as needed to position nicely
   },
   special: {
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#fff',
     paddingTop: 30,
-    fontSize: 26
+    fontSize: 22
   },
   offerText: {
     color: '#fff',

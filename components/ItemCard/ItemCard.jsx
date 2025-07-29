@@ -1,4 +1,3 @@
-import { BlurView } from '@react-native-community/blur';
 import React from 'react';
 import {
     Dimensions,
@@ -10,8 +9,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-
-
 const { width } = Dimensions.get('window');
 
 const ItemCard = ({ item, onPress, onAddPress, onFavoritePress }) => {
@@ -22,21 +19,13 @@ const ItemCard = ({ item, onPress, onAddPress, onFavoritePress }) => {
 
                 {/* Price overlay with blur effect */}
                 <View style={styles.priceOverlay}>
-                    <BlurView
-                        style={styles.blurBackground}
-                        blurType="dark" // or "light", "extraDark", etc.
-                        blurAmount={10}
-                        reducedTransparencyFallbackColor="black"
-                    >
-                        <View style={styles.priceContainer}>
-                            <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
-                            {item.originalPrice && (
-                                <Text style={styles.originalPrice}>/${item.originalPrice.toFixed(2)}</Text>
-                            )}
-                        </View>
-                    </BlurView>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+                        {item.originalPrice && (
+                            <Text style={styles.originalPrice}>/${item.originalPrice.toFixed(2)}</Text>
+                        )}
+                    </View>
                 </View>
-
             </View>
 
             <View style={styles.itemInfo}>
@@ -169,8 +158,4 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         //borderColor: '#934B1F',
     },
-    blurBackground: {
-        width: '100%',
-    },
-
 });
