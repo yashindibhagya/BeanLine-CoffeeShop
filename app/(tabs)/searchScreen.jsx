@@ -4,6 +4,7 @@ import {
     Dimensions,
     FlatList,
     ScrollView,
+    StatusBar,
     StyleSheet,
     Text,
     TextInput,
@@ -15,7 +16,9 @@ import { categories } from '@/assets/Data/categories';
 import { getItemsByCategory, searchItems } from '@/assets/Data/items/items';
 import ItemCard from '@/components/ItemCard/ItemCard';
 
+
 const { width } = Dimensions.get('window');
+const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
 
 export default function SidebarCategories() {
     const [selectedCategory, setSelectedCategory] = useState('1');
@@ -34,9 +37,16 @@ export default function SidebarCategories() {
 
     return (
         <View style={styles.container}>
+
             {/* Sidebar */}
             <View style={styles.sidebar}>
-                <ScrollView contentContainerStyle={styles.sidebarIcons}>
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.sidebarIcons,
+                        { paddingTop: STATUS_BAR_HEIGHT, paddingBottom: 80 }, // reserve for navbar
+                    ]}
+                    showsVerticalScrollIndicator={false}
+                >
                     {categories.map((cat) => (
                         <TouchableOpacity
                             key={cat.id}
@@ -49,8 +59,8 @@ export default function SidebarCategories() {
                             <View style={styles.iconWrapper}>
                                 <MaterialIcons
                                     name={cat.icon}
-                                    style={styles.categoryIconStyle}
                                     size={24}
+                                    style={styles.icon}
                                     color={selectedCategory === cat.id ? '#8A4B23' : '#fff'}
                                 />
                                 <Text
@@ -61,12 +71,11 @@ export default function SidebarCategories() {
                                 >
                                     {cat.title}
                                 </Text>
-
                             </View>
                         </TouchableOpacity>
-
                     ))}
                 </ScrollView>
+
             </View>
 
             {/* Content */}
