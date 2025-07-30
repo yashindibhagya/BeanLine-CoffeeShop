@@ -95,9 +95,10 @@ export default function SidebarCategories() {
                     {/* Grid */}
                     <FlatList
                         data={items}
-                        numColumns={2}
+                        numColumns={1}
                         keyExtractor={(item) => item.id}
-                        columnWrapperStyle={styles.grid}
+                        key={'single-column'}
+                        //columnWrapperStyle={styles.grid}
                         contentContainerStyle={styles.itemsList}
                         renderItem={({ item }) => (
                             <View style={styles.cardContainer}>
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4,
     },
     cardContainer: {
-        width: (width - 30 - 38) / 2 - 4, // Available width minus sidebar, padding, and gap
+        width: (width - 10 - 38) / 2 - 9, // Available width minus sidebar, padding, and gap
         maxWidth: 100, // Maximum width to prevent cards from being too wide
     },
     card: {
