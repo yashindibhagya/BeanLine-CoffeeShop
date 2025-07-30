@@ -207,11 +207,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4,
     },
     cardContainer: {
-        width: (width - 10 - 38) / 2 - 9, // Available width minus sidebar, padding, and gap
-        maxWidth: 100, // Maximum width to prevent cards from being too wide
+        width: '100%', // Use full width for single column
+        // marginBottom: 10, // Add some space between cards
+        alignSelf: 'center',
     },
     card: {
-
+        minHeight: 180, // Make the card visually larger
     },
     cardHeader: {
         flexDirection: 'row',
