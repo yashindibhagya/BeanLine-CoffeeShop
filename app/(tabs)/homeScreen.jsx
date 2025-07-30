@@ -100,7 +100,7 @@ const HomeScreen = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
-      <StatusBar barStyle="light-content" backgroundColor='#000' />
+      <StatusBar backgroundColor="#000" barStyle="light-content" />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}

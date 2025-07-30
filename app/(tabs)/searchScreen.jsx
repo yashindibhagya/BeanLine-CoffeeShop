@@ -15,8 +15,8 @@ import {
 
 import { categories } from '@/assets/Data/categories';
 import { getItemsByCategory, searchItems } from '@/assets/Data/items/items';
-import ItemCard from '@/components/ItemCard/ItemCard';
-
+//import ItemCard from '@/components/ItemCard/ItemCard';
+import ItemCard from '@/components/ItemCard/SearchItemCard'; // Updated import for SearchItemCard
 
 const { width } = Dimensions.get('window');
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
@@ -38,7 +38,7 @@ export default function SidebarCategories() {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar backgroundColor="#D0F3DA" barStyle="dark-content" />
+            <StatusBar backgroundColor="#000" barStyle="light-content" />
             <View style={styles.container}>
 
                 {/* Sidebar */}
