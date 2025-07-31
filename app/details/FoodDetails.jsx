@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useCart } from '@/app/context/CartContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCart } from '../context/CartContext';
 
 import { getAllItemsFlat } from '@/assets/Data/items/items';
 import { useEffect } from 'react';

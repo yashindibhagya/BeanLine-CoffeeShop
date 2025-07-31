@@ -16,18 +16,7 @@ const CartScreen = () => {
           <FlatList
             data={cartItems}
             keyExtractor={(_, idx) => idx.toString()}
-            renderItem={({ item, index }) => (
-              <View style={styles.itemRow}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                {item.selectedSize && <Text style={styles.itemMeta}>Size: {item.selectedSize}</Text>}
-                {item.selectedSugar && <Text style={styles.itemMeta}>Sugar: {item.selectedSugar}</Text>}
-                <Text style={styles.itemMeta}>Qty: {item.quantity}</Text>
-                <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
-                <TouchableOpacity style={styles.removeBtn} onPress={() => removeFromCart(index)}>
-                  <Text style={styles.removeBtnText}>Remove</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            renderItem={renderItem}
           />
           <View style={styles.totalRow}>
             <Text style={styles.totalText}>Total:</Text>
@@ -43,9 +32,98 @@ const CartScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  cardContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#181B23',
+    borderRadius: 18,
+    marginBottom: 20,
+    padding: 14,
+    shadowColor: '#000',
+    shadowOpacity: 0.10,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  cardImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 14,
+    marginRight: 18,
+    backgroundColor: '#222',
+  },
+  cardContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  cardSubtitle: {
+    fontSize: 13,
+    color: '#aaa',
+    marginBottom: 6,
+  },
+  cardMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+  },
+  metaBox: {
+    backgroundColor: '#23242a',
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    marginRight: 8,
+  },
+  metaBoxText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+  cardBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cardPrice: {
+    color: '#F9A826',
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginRight: 18,
+  },
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  qtyBtn: {
+    backgroundColor: '#F9A826',
+    paddingHorizontal: 13,
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qtyBtnText: {
+    color: '#181B23',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  qtyText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 12,
+    minWidth: 22,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#000',
     padding: 20,
   },
   title: {
