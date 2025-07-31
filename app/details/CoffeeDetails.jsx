@@ -18,7 +18,6 @@ export default function CoffeeDetails() {
   const [item, setItem] = useState(null);
 
   useEffect(() => {
-    // coffee param may be an object or just an id string
     let coffeeId = coffee;
     if (typeof coffee === 'string') {
       try {
@@ -27,12 +26,13 @@ export default function CoffeeDetails() {
       } catch {
         coffeeId = coffee;
       }
-    } else if (coffee && coffee.id) {
-      coffeeId = coffee.id;
+    } else if (coffee && item.id) {
+      coffeeId = item.id;
     }
-    // Search for the item in allItems
-    const found = getAllItemsFlat().find(i => i.id === coffeeId);
-    setItem(found);
+    // Always compare as strings
+    const allItems = getAllItemsFlat();
+    const foundItem = allItems.find(i => String(i.id) === String(coffeeId));
+    setItem(foundItem);
   }, [coffee]);
 
   const handleAddToCart = () => {

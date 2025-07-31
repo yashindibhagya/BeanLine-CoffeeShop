@@ -6,7 +6,6 @@ import OfferScreen from '@/components/Offers/offer';
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   Image,
   KeyboardAvoidingView,
@@ -21,7 +20,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const { width } = Dimensions.get('window');
+//const { width } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -34,14 +33,12 @@ const HomeScreen = () => {
     setSearchQuery(''); // Clear search when changing category
   }
 
-  // Handle item press
   const handleItemPress = (item) => {
-    // Normalize the type/category string for matching
     const type = (item.type || item.category || '').toLowerCase();
     if (type === 'hot coffee' || type === 'cold coffee' || type === 'tea') {
-      router.push('/details/CoffeeDetails', { coffee: item.id });
+      router.push('/details/CoffeeDetails', { coffee: String(item.id) }); // <-- Ensure string
     } else {
-      router.push('/details/FoodDetails', { food: item.id });
+      router.push('/details/FoodDetails', { food: String(item.id) }); // <-- Ensure string
     }
   };
 
