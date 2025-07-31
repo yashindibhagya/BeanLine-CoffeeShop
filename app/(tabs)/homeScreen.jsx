@@ -36,28 +36,33 @@ const HomeScreen = () => {
   // Add this debugging version of handleItemPress to your HomeScreen
 
   const handleItemPress = (item) => {
-    // console.log('=== HANDLE ITEM PRESS DEBUG ===');
-    // console.log('Clicked item:', item);
-    // console.log('Item ID:', item.id, 'Type:', typeof item.id);
-    // console.log('Item type/category:', item.type || item.category);
+    console.log('=== HANDLE ITEM PRESS DEBUG ===');
+    console.log('Clicked item:', item);
+    console.log('Item ID:', item.id, 'Type:', typeof item.id);
+    console.log('Selected Category:', selectedCategory);
+    console.log('Item type:', item.type);
+    console.log('Item category:', item.category);
+    console.log('Item categoryId:', item.categoryId);
+    console.log('Item name:', item.name);
+    console.log('================================');
 
-    const type = (item.type || item.category || '').toLowerCase();
-    //  console.log('Processed type:', type);
+    // Get the category ID from the item or use the selected category
+    const itemCategoryId = item.categoryId || item.category || selectedCategory;
+    const coffeeCategories = ['1', '2', '3'];
 
-    if (type === 'hot coffee' || type === 'cold coffee' || type === 'tea') {
-      //   console.log('Navigating to CoffeeDetails with ID:', item.id);
+    if (coffeeCategories.includes(String(itemCategoryId))) {
+      console.log('Navigating to CoffeeDetails with ID:', item.id);
       router.push({
         pathname: '/details/CoffeeDetails',
         params: { coffee: item.id }
       });
     } else {
-      // console.log('Navigating to FoodDetails with ID:', item.id);
+      console.log('Navigating to FoodDetails with ID:', item.id);
       router.push({
         pathname: '/details/FoodDetails',
         params: { food: item.id }
       });
     }
-    //   console.log('================================');
   };
 
   // Handle add button press

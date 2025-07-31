@@ -17,6 +17,7 @@ import { categories } from '@/assets/Data/categories';
 import { getItemsByCategory, searchItems } from '@/assets/Data/items/items';
 //import ItemCard from '@/components/ItemCard/ItemCard';
 import ItemCard from '@/components/ItemCard/SearchItemCard'; // Updated import for SearchItemCard
+import { useRouter } from 'expo-router'; // <-- Add this import
 
 const { width } = Dimensions.get('window');
 const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
@@ -24,6 +25,27 @@ const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
 export default function SidebarCategories() {
     const [selectedCategory, setSelectedCategory] = useState('1');
     const [searchQuery, setSearchQuery] = useState('');
+    const router = useRouter(); // <-- Add this
+
+    // Navigation handler similar to HomeScreen
+    const handleItemPress = (item) => {
+        const type = (item.type || item.category || '').toLowerCase();
+        const coffeeCategories = ['1', '2', '3'];
+        const itemCategoryId = item.categoryId || item.category;
+
+        if (coffeeCategories.includes(String(itemCategoryId))) {
+            router.push({
+                pathname: '/details/CoffeeDetails',
+                params: { coffee: item.id }
+            });
+        } else {
+            router.push({
+                pathname: '/details/FoodDetails',
+                params: { food: item.id }
+            });
+        }
+    };
+
 
     const handleCategorySelect = (id) => {
         setSelectedCategory(id);
@@ -101,15 +123,15 @@ export default function SidebarCategories() {
                         //columnWrapperStyle={styles.grid}
                         contentContainerStyle={styles.itemsList}
                         renderItem={({ item }) => (
-                            <View style={styles.cardContainer}>
-                                <ItemCard
-                                    item={item}
-                                    onPress={() => console.log('Pressed:', item.name)}
-                                    onAddPress={() => console.log('Add to cart:', item.name)}
-                                    style={styles.card}
-                                />
-                            </View>
-                        )}
+    <View style={styles.cardContainer}>
+        <ItemCard
+            item={item}
+            onPress={() => handleItemPress(item)}
+            onAddPress={() => console.log('Add to cart:', item.name)}
+            style={styles.card}
+        />
+    </View>
+)}
                     />
 
                 </View>

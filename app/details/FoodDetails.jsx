@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCart } from '../context/CartContext';
 
 import { getAllItemsFlat } from '@/assets/Data/items/items';
 import { useEffect } from 'react';
@@ -11,6 +12,7 @@ export default function FoodDetails() {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [item, setItem] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     // food param may be an object or just an id string
@@ -31,8 +33,12 @@ export default function FoodDetails() {
   }, [food]);
 
   const handleAddToCart = () => {
-    // Add to cart logic here
-    router.back();
+    if (!item) return;
+    addToCart({
+      ...item,
+      quantity,
+    });
+    router.push('/cartScreen'); // Navigate to cart
   };
 
   if (item === undefined) {

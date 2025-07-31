@@ -5,6 +5,7 @@ const cupSizes = ['Small', 'Medium', 'Large'];
 const sugarLevels = ['No Sugar', 'Less Sugar', 'Normal', 'Extra Sugar'];
 
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCart } from '../context/CartContext';
 
 import { getAllItemsFlat } from '@/assets/Data/items/items';
 import { useEffect } from 'react';
@@ -17,6 +18,7 @@ export default function CoffeeDetails() {
   const [quantity, setQuantity] = useState(1);
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     console.log('=== DEBUG INFO ===');
@@ -64,13 +66,20 @@ export default function CoffeeDetails() {
   }, [coffee]);
 
   const handleAddToCart = () => {
-    // Add to cart logic here
-    router.back();
+    if (!item) return;
+    addToCart({
+      ...item,
+      selectedSize,
+      selectedSugar,
+      quantity,
+    });
+    router.push('/cartScreen'); // Navigate to cart
   };
+
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+      <View style={styles.loadingContainer}>
         <Text>Loading...</Text>
       </View>
     );
@@ -78,9 +87,9 @@ export default function CoffeeDetails() {
 
   if (!item) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
-        <Text style={{ color: 'red', fontSize: 18, marginBottom: 10 }}>Item not found</Text>
-        <Text style={{ color: '#666', textAlign: 'center', paddingHorizontal: 20 }}>
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Item not found</Text>
+        <Text style={styles.errorSubText}>
           Looking for item with ID: {coffee} (type: {typeof coffee})
         </Text>
         <TouchableOpacity
@@ -94,46 +103,82 @@ export default function CoffeeDetails() {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       <Image source={item.image} style={styles.image} />
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.description}>{item.description}</Text>
       <Text style={styles.price}>${item.price}</Text>
 
-      <Text style={styles.sectionTitle}>Select Cup Size</Text>
-      <View style={styles.optionsRow}>
-        {cupSizes.map(size => (
-          <TouchableOpacity
-            key={size}
-            style={[styles.optionButton, selectedSize === size && styles.selectedOption]}
-            onPress={() => setSelectedSize(size)}
-          >
-            <Text style={styles.optionText}>{size}</Text>
-          </TouchableOpacity>
-        ))}
+      {/* Cup Size Section */}
+      <View style={styles.optionSection}>
+        <Text style={styles.sectionTitle}>Select Cup Size</Text>
+        <View style={styles.optionsRow}>
+          {cupSizes.map(size => (
+            <TouchableOpacity
+              key={size}
+              style={[
+                styles.optionButton,
+                selectedSize === size && styles.selectedOption
+              ]}
+              onPress={() => setSelectedSize(size)}
+            >
+              <Text style={[
+                styles.optionText,
+                selectedSize === size && styles.selectedOptionText
+              ]}>
+                {size}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
-      <Text style={styles.sectionTitle}>Select Sugar Level</Text>
-      <View style={styles.optionsRow}>
-        {sugarLevels.map(level => (
-          <TouchableOpacity
-            key={level}
-            style={[styles.optionButton, selectedSugar === level && styles.selectedOption]}
-            onPress={() => setSelectedSugar(level)}
-          >
-            <Text style={styles.optionText}>{level}</Text>
-          </TouchableOpacity>
-        ))}
+      {/* Sugar Level Section */}
+      <View style={styles.optionSection}>
+        <Text style={styles.sectionTitle}>Select Sugar Level</Text>
+        <View style={styles.optionsRow}>
+          {sugarLevels.map(level => (
+            <TouchableOpacity
+              key={level}
+              style={[
+                styles.optionButton,
+                selectedSugar === level && styles.selectedOption
+              ]}
+              onPress={() => setSelectedSugar(level)}
+            >
+              <Text style={[
+                styles.optionText,
+                selectedSugar === level && styles.selectedOptionText
+              ]}>
+                {level}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
-      <View style={styles.quantityRow}>
-        <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))} style={styles.quantityButton}>
-          <Text style={styles.quantityButtonText}>-</Text>
-        </TouchableOpacity>
-        <Text style={styles.quantityText}>{quantity}</Text>
-        <TouchableOpacity onPress={() => setQuantity(quantity + 1)} style={styles.quantityButton}>
-          <Text style={styles.quantityButtonText}>+</Text>
-        </TouchableOpacity>
+      {/* Quantity Section */}
+      <View style={styles.quantitySection}>
+        <Text style={styles.sectionTitle}>Quantity</Text>
+        <View style={styles.quantityRow}>
+          <TouchableOpacity
+            onPress={() => setQuantity(Math.max(1, quantity - 1))}
+            style={styles.quantityButton}
+          >
+            <Text style={styles.quantityButtonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.quantityText}>{quantity}</Text>
+          <TouchableOpacity
+            onPress={() => setQuantity(quantity + 1)}
+            style={styles.quantityButton}
+          >
+            <Text style={styles.quantityButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
@@ -144,100 +189,162 @@ export default function CoffeeDetails() {
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#121212',
+  },
   container: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#121212',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#121212',
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  errorSubText: {
+    color: '#AAAAAA',
+    textAlign: 'center',
+    paddingHorizontal: 20,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 220,
+    height: 220,
     borderRadius: 20,
     marginBottom: 20,
+    resizeMode: 'cover',
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     marginBottom: 10,
+    color: '#FFFFFF',
   },
   description: {
     fontSize: 16,
-    color: '#555',
+    color: '#CCCCCC',
     marginBottom: 10,
     textAlign: 'center',
+    paddingHorizontal: 20,
   },
   price: {
-    fontSize: 22,
-    color: '#b98068',
-    marginBottom: 20,
+    fontSize: 24,
+    color: '#F9A826',
+    marginBottom: 30,
+    fontWeight: 'bold',
+  },
+  optionSection: {
+    width: '100%',
+    marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 5,
+    marginBottom: 15,
+    textAlign: 'center',
+    color: '#FFFFFF',
   },
   optionsRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 10,
+    flexWrap: 'wrap',
+    gap: 10,
   },
   optionButton: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#b98068',
-    borderRadius: 10,
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: '#444',
+    borderRadius: 25,
+    backgroundColor: '#1E1E1E',
+    minWidth: 80,
+    alignItems: 'center',
   },
   selectedOption: {
-    backgroundColor: '#b98068',
+    backgroundColor: '#F9A826',
+    borderColor: '#F9A826',
+    shadowColor: '#F9A826',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
   },
   optionText: {
-    color: '#333',
+    color: '#AAAAAA',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  selectedOptionText: {
+    color: '#121212',
     fontWeight: 'bold',
+  },
+  quantitySection: {
+    width: '100%',
+    marginBottom: 30,
   },
   quantityRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 15,
+    justifyContent: 'center',
   },
   quantityButton: {
-    padding: 10,
-    backgroundColor: '#b98068',
-    borderRadius: 10,
-    marginHorizontal: 10,
+    width: 40,
+    height: 40,
+    backgroundColor: '#F9A826',
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
   },
   quantityButtonText: {
-    color: '#fff',
-    fontSize: 20,
+    color: '#121212',
+    fontSize: 22,
     fontWeight: 'bold',
   },
   quantityText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
+    color: '#FFFFFF',
+    minWidth: 30,
+    textAlign: 'center',
   },
   addButton: {
-    backgroundColor: '#6f4e37',
-    padding: 15,
-    borderRadius: 20,
-    marginTop: 20,
+    backgroundColor: '#F9A826',
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+    borderRadius: 30,
     width: '80%',
     alignItems: 'center',
+    marginTop: 20,
+    shadowColor: '#F9A826',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   addButtonText: {
-    color: '#fff',
+    color: '#121212',
     fontSize: 18,
     fontWeight: 'bold',
   },
   backButton: {
-    backgroundColor: '#b98068',
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: '#333333',
+    padding: 12,
+    borderRadius: 15,
     marginTop: 20,
   },
   backButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
