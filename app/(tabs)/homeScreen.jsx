@@ -24,7 +24,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const [selectedCategory, setSelectedCategory] = useState('1'); // Changed to '1' to match items data
+  const [selectedCategory, setSelectedCategory] = useState('1'); // Changed to integer
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
 
@@ -33,15 +33,32 @@ const HomeScreen = () => {
     setSearchQuery(''); // Clear search when changing category
   }
 
-  const handleItemPress = (item) => {
-    const type = (item.type || item.category || '').toLowerCase();
-    if (type === 'hot coffee' || type === 'cold coffee' || type === 'tea') {
-      router.push('/details/CoffeeDetails', { coffee: String(item.id) }); // <-- Ensure string
-    } else {
-      router.push('/details/FoodDetails', { food: String(item.id) }); // <-- Ensure string
-    }
-  };
+  // Add this debugging version of handleItemPress to your HomeScreen
 
+  const handleItemPress = (item) => {
+    // console.log('=== HANDLE ITEM PRESS DEBUG ===');
+    // console.log('Clicked item:', item);
+    // console.log('Item ID:', item.id, 'Type:', typeof item.id);
+    // console.log('Item type/category:', item.type || item.category);
+
+    const type = (item.type || item.category || '').toLowerCase();
+    //  console.log('Processed type:', type);
+
+    if (type === 'hot coffee' || type === 'cold coffee' || type === 'tea') {
+      //   console.log('Navigating to CoffeeDetails with ID:', item.id);
+      router.push({
+        pathname: '/details/CoffeeDetails',
+        params: { coffee: item.id }
+      });
+    } else {
+      // console.log('Navigating to FoodDetails with ID:', item.id);
+      router.push({
+        pathname: '/details/FoodDetails',
+        params: { food: item.id }
+      });
+    }
+    //   console.log('================================');
+  };
 
   // Handle add button press
   const handleAddPress = (item) => {
@@ -153,7 +170,7 @@ const HomeScreen = () => {
         <FlatList
           data={categories}
           renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()} // Convert to string for keyExtractor
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.categoriesContainer}
@@ -172,7 +189,7 @@ const HomeScreen = () => {
             <FlatList
               data={selectedCategoryItems}
               renderItem={renderItemCard}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.id.toString()} // Convert to string for keyExtractor
               numColumns={2}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.itemsContainer}

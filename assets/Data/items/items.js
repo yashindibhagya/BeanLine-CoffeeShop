@@ -20,14 +20,14 @@ export {
 
 // Export combined items object for easy access
 export const allItems = {
-    "1": hotCoffeeItems,     // Hot Coffee
-    "2": coldCoffeeItems,    // Cold Coffee
-    "3": teaItems,           // Tea
-    "4": pastriesItems,      // Pastries
-    "5": sandwichesItems,    // Sandwiches
-    "6": smoothiesItems,     // Smoothies
-    "7": snacksItems,        // Snacks
-    "8": specialsItems       // Specials
+    1: hotCoffeeItems,     // Hot Coffee
+    2: coldCoffeeItems,    // Cold Coffee
+    3: teaItems,           // Tea
+    4: pastriesItems,      // Pastries
+    5: sandwichesItems,    // Sandwiches
+    6: smoothiesItems,     // Smoothies
+    7: snacksItems,        // Snacks
+    8: specialsItems       // Specials
 };
 
 // Helper function to get items by category

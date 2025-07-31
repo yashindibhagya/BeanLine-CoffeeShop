@@ -16,23 +16,51 @@ export default function CoffeeDetails() {
   const [selectedSugar, setSelectedSugar] = useState(sugarLevels[2]);
   const [quantity, setQuantity] = useState(1);
   const [item, setItem] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let coffeeId = coffee;
-    if (typeof coffee === 'string') {
-      try {
-        const parsed = JSON.parse(coffee);
-        coffeeId = parsed.id || coffee;
-      } catch {
-        coffeeId = coffee;
-      }
-    } else if (coffee && item.id) {
-      coffeeId = item.id;
-    }
-    // Always compare as strings
+    console.log('=== DEBUG INFO ===');
+    console.log('Received coffee param:', coffee);
+    console.log('Coffee param type:', typeof coffee);
+
+    // Get all items for debugging
     const allItems = getAllItemsFlat();
-    const foundItem = allItems.find(i => String(i.id) === String(coffeeId));
+    console.log('Total items found:', allItems.length);
+    console.log('First few items:', allItems.slice(0, 3).map(item => ({ id: item.id, name: item.name, type: typeof item.id })));
+
+    // Try different approaches to find the item
+    let foundItem = null;
+
+    // Approach 1: Direct comparison (string)
+    foundItem = allItems.find(i => i.id === coffee);
+    console.log('Found with string comparison:', foundItem ? foundItem.name : 'Not found');
+
+    if (!foundItem) {
+      // Approach 2: Parse as integer
+      const coffeeId = parseInt(coffee, 10);
+      console.log('Parsed coffee ID:', coffeeId);
+      foundItem = allItems.find(i => i.id === coffeeId);
+      console.log('Found with integer comparison:', foundItem ? foundItem.name : 'Not found');
+    }
+
+    if (!foundItem) {
+      // Approach 3: Convert both to strings
+      foundItem = allItems.find(i => String(i.id) === String(coffee));
+      console.log('Found with string conversion:', foundItem ? foundItem.name : 'Not found');
+    }
+
+    if (!foundItem) {
+      // Approach 4: Convert both to numbers
+      const coffeeNum = Number(coffee);
+      foundItem = allItems.find(i => Number(i.id) === coffeeNum);
+      console.log('Found with number conversion:', foundItem ? foundItem.name : 'Not found');
+    }
+
+    console.log('Final found item:', foundItem);
+    console.log('==================');
+
     setItem(foundItem);
+    setLoading(false);
   }, [coffee]);
 
   const handleAddToCart = () => {
@@ -40,28 +68,31 @@ export default function CoffeeDetails() {
     router.back();
   };
 
-  if (!item) {
+  if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
         <Text>Loading...</Text>
       </View>
     );
   }
 
-  if (item === undefined) {
+  if (!item) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: 'red' }}>Item not found.</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ color: 'red', fontSize: 18, marginBottom: 10 }}>Item not found</Text>
+        <Text style={{ color: '#666', textAlign: 'center', paddingHorizontal: 20 }}>
+          Looking for item with ID: {coffee} (type: {typeof coffee})
+        </Text>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </TouchableOpacity>
       </View>
     );
   }
-  if (item === null) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={item.image} style={styles.image} />
@@ -197,6 +228,17 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  backButton: {
+    backgroundColor: '#b98068',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
