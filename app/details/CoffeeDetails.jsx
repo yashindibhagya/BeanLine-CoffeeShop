@@ -4,20 +4,67 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 const cupSizes = ['Small', 'Medium', 'Large'];
 const sugarLevels = ['No Sugar', 'Less Sugar', 'Normal', 'Extra Sugar'];
 
-export default function CoffeeDetails({ route, navigation }) {
-  const { item } = route.params;
+import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { getAllItemsFlat } from '@/assets/Data/items/items';
+import { useEffect } from 'react';
+
+export default function CoffeeDetails() {
+  const { coffee } = useLocalSearchParams();
+  const router = useRouter();
   const [selectedSize, setSelectedSize] = useState(cupSizes[1]);
   const [selectedSugar, setSelectedSugar] = useState(sugarLevels[2]);
   const [quantity, setQuantity] = useState(1);
+  const [item, setItem] = useState(null);
+
+  useEffect(() => {
+    // coffee param may be an object or just an id string
+    let coffeeId = coffee;
+    if (typeof coffee === 'string') {
+      try {
+        const parsed = JSON.parse(coffee);
+        coffeeId = parsed.id || coffee;
+      } catch {
+        coffeeId = coffee;
+      }
+    } else if (coffee && coffee.id) {
+      coffeeId = coffee.id;
+    }
+    // Search for the item in allItems
+    const found = getAllItemsFlat().find(i => i.id === coffeeId);
+    setItem(found);
+  }, [coffee]);
 
   const handleAddToCart = () => {
     // Add to cart logic here
-    navigation.goBack();
+    router.back();
   };
 
+  if (!item) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (item === undefined) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: 'red' }}>Item not found.</Text>
+      </View>
+    );
+  }
+  if (item === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
+      <Image source={item.image} style={styles.image} />
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.description}>{item.description}</Text>
       <Text style={styles.price}>${item.price}</Text>

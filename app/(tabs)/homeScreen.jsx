@@ -3,6 +3,7 @@ import { getItemsByCategory, searchItems } from '@/assets/Data/items/items'; // 
 import Header from '@/components/Home/Header';
 import ItemCard from '@/components/ItemCard/ItemCard'; // Import the new ItemCard component
 import OfferScreen from '@/components/Offers/offer';
+import { useNavigation, useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import {
   Dimensions,
@@ -23,8 +24,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const { width } = Dimensions.get('window');
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState('1'); // Changed to '1' to match items data
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
 
   const handleCategoryPress = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -33,9 +36,15 @@ const HomeScreen = () => {
 
   // Handle item press
   const handleItemPress = (item) => {
-    console.log('Item pressed:', item);
-    // Add your navigation or item detail logic here
+    // Normalize the type/category string for matching
+    const type = (item.type || item.category || '').toLowerCase();
+    if (type === 'hot coffee' || type === 'cold coffee' || type === 'tea') {
+      router.push('/details/CoffeeDetails', { coffee: item.id });
+    } else {
+      router.push('/details/FoodDetails', { food: item.id });
+    }
   };
+
 
   // Handle add button press
   const handleAddPress = (item) => {

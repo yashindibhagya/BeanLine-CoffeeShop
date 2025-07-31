@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const cupSizes = ['Small', 'Medium', 'Large'];
-const sugarLevels = ['No Sugar', 'Less Sugar', 'Normal', 'Extra Sugar'];
-
-export default function CoffeeDetails({ route, navigation }) {
-  const { item } = route.params;
-  const [selectedSize, setSelectedSize] = useState(cupSizes[1]);
-  const [selectedSugar, setSelectedSugar] = useState(sugarLevels[2]);
+export default function FoodDetails({ route, navigation }) {
+  const { food } = route.params;
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
@@ -17,36 +12,10 @@ export default function CoffeeDetails({ route, navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.price}>${item.price}</Text>
-
-      <Text style={styles.sectionTitle}>Select Cup Size</Text>
-      <View style={styles.optionsRow}>
-        {cupSizes.map(size => (
-          <TouchableOpacity
-            key={size}
-            style={[styles.optionButton, selectedSize === size && styles.selectedOption]}
-            onPress={() => setSelectedSize(size)}
-          >
-            <Text style={styles.optionText}>{size}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <Text style={styles.sectionTitle}>Select Sugar Level</Text>
-      <View style={styles.optionsRow}>
-        {sugarLevels.map(level => (
-          <TouchableOpacity
-            key={level}
-            style={[styles.optionButton, selectedSugar === level && styles.selectedOption]}
-            onPress={() => setSelectedSugar(level)}
-          >
-            <Text style={styles.optionText}>{level}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <Image source={{ uri: food.image }} style={styles.image} />
+      <Text style={styles.title}>{food.name}</Text>
+      <Text style={styles.description}>{food.description}</Text>
+      <Text style={styles.price}>${food.price}</Text>
 
       <View style={styles.quantityRow}>
         <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))} style={styles.quantityButton}>
@@ -92,32 +61,6 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#b98068',
     marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginBottom: 5,
-  },
-  optionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  optionButton: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#b98068',
-    borderRadius: 10,
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-  },
-  selectedOption: {
-    backgroundColor: '#b98068',
-  },
-  optionText: {
-    color: '#333',
-    fontWeight: 'bold',
   },
   quantityRow: {
     flexDirection: 'row',
