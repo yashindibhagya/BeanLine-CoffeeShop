@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCart } from '../context/CartContext';
 
 const CartScreen = () => {
@@ -128,8 +128,3 @@ const styles = StyleSheet.create({
 });
 
 export default CartScreen;
-
-
-export default CartScreen;
-
-const styles = StyleSheet.create({})
