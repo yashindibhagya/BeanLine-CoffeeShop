@@ -16,7 +16,30 @@ const CartScreen = () => {
           <FlatList
             data={cartItems}
             keyExtractor={(_, idx) => idx.toString()}
-            renderItem={renderItem}
+            renderItem={({ item, index }) => (
+              <View style={styles.itemRow}>
+                <View style={styles.imagePlaceholder} />
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <View style={styles.metaRow}>
+                    <View style={styles.metaBox}>
+                      <Text style={styles.metaBoxText}>{item.meta || 'M'}</Text>
+                    </View>
+                    <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+                  </View>
+                  <View style={styles.qtyRow}>
+                    <TouchableOpacity style={styles.qtyBtn}>
+                      <Text style={styles.qtyBtnText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.qtyText}>1</Text>
+                    <TouchableOpacity style={styles.qtyBtn}>
+                      <Text style={styles.qtyBtnText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+            )}
           />
           <View style={styles.totalRow}>
             <Text style={styles.totalText}>Total:</Text>
@@ -203,6 +226,90 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  itemRow: {
+    flexDirection: 'row',
+    backgroundColor: '#181B23',
+    borderRadius: 18,
+    padding: 14,
+    marginBottom: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+
+  imagePlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: 14,
+    backgroundColor: '#222',
+    marginRight: 16,
+  },
+
+  itemDetails: {
+    flex: 1,
+  },
+
+  itemName: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+
+  metaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+
+  metaBox: {
+    backgroundColor: '#23242a',
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+
+  metaBoxText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+
+  itemPrice: {
+    color: '#F9A826',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  qtyBtn: {
+    backgroundColor: '#F9A826',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
+  },
+
+  qtyBtnText: {
+    color: '#181B23',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+
+  qtyText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 12,
+    minWidth: 22,
+    textAlign: 'center',
+  },
+
 });
 
 export default CartScreen;

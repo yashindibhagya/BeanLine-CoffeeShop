@@ -4,8 +4,8 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 const cupSizes = ['Small', 'Medium', 'Large'];
 const sugarLevels = ['No Sugar', 'Less Sugar', 'Normal', 'Extra Sugar'];
 
-import { useCart } from '@/context/CartContext';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCart } from '../context/CartContext';
 
 import { getAllItemsFlat } from '@/assets/Data/items/items';
 import { useEffect } from 'react';
