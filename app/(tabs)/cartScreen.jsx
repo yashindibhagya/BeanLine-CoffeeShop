@@ -15,7 +15,7 @@ const CartScreen = () => {
         <Text style={styles.title}>Your Cart</Text>
 
         <TouchableOpacity style={styles.clearBtn} onPress={clearCart}>
-          <AntDesign name="delete" size={24} color="" />
+          <AntDesign name="delete" size={24} color="red" />
         </TouchableOpacity>
       </View>
       {cartItems.length === 0 ? (
@@ -62,6 +62,14 @@ const CartScreen = () => {
               <Text style={styles.totalText}>Total:</Text>
               <Text style={styles.totalAmount}>${getTotal().toFixed(2)}</Text>
             </View>
+
+            <TouchableOpacity
+              style={styles.payNowBtn}
+              disabled={cartItems.length === 0}
+              onPress={() => {/* TODO: handle payment */ }}
+            >
+              <Text style={styles.payNowBtnText}>Pay Now</Text>
+            </TouchableOpacity>
           </View>
         </>
       )}
@@ -129,7 +137,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   quantityBtn: {
-    backgroundColor: '#FF9500',
+    backgroundColor: '#934B1F',
     width: 32,
     height: 32,
     borderRadius: 8,
@@ -190,12 +198,12 @@ const styles = StyleSheet.create({
   totalText: {
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '400',
   },
   totalAmount: {
-    color: '#F9A826',
-    fontSize: 22,
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '900',
   },
   clearCartTopRight: {
     position: 'absolute',
@@ -214,7 +222,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-
+  payNowBtn: {
+    backgroundColor: '#934B1F',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 10,
+    marginHorizontal: 0,
+    //opacity: 1,
+  },
+  payNowBtnText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
 });
 
 export default CartScreen;

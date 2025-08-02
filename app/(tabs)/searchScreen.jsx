@@ -123,15 +123,15 @@ export default function SidebarCategories() {
                         //columnWrapperStyle={styles.grid}
                         contentContainerStyle={styles.itemsList}
                         renderItem={({ item }) => (
-    <View style={styles.cardContainer}>
-        <ItemCard
-            item={item}
-            onPress={() => handleItemPress(item)}
-            onAddPress={() => console.log('Add to cart:', item.name)}
-            style={styles.card}
-        />
-    </View>
-)}
+                            <View style={styles.cardContainer}>
+                                <ItemCard
+                                    item={item}
+                                    onPress={() => handleItemPress(item)}
+                                    onAddPress={() => console.log('Add to cart:', item.name)}
+                                    style={styles.card}
+                                />
+                            </View>
+                        )}
                     />
 
                 </View>
