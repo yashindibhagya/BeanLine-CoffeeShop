@@ -1,14 +1,23 @@
+import { AntDesign } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useCart } from '../context/CartContext';
 
 const CartScreen = () => {
-  const { cartItems, removeFromCart, clearCart, getTotal } = useCart();
+  const { cartItems, removeFromCart, clearCart, getTotal, increaseQuantity, decreaseQuantity } = useCart();
+  const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#000" barStyle="light-content" />
-      <Text style={styles.title}>Your Cart</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Your Cart</Text>
+
+        <TouchableOpacity style={styles.clearBtn} onPress={clearCart}>
+          <AntDesign name="delete" size={24} color="" />
+        </TouchableOpacity>
+      </View>
       {cartItems.length === 0 ? (
         <Text style={styles.emptyText}>Your cart is empty.</Text>
       ) : (
@@ -17,144 +26,147 @@ const CartScreen = () => {
             data={cartItems}
             keyExtractor={(_, idx) => idx.toString()}
             renderItem={({ item, index }) => (
-              <View style={styles.itemRow}>
-                <View style={styles.imagePlaceholder} />
-                <View style={styles.itemDetails}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <View style={styles.metaRow}>
-                    <View style={styles.metaBox}>
-                      <Text style={styles.metaBoxText}>{item.meta || 'M'}</Text>
+              <LinearGradient
+                colors={['#484848', '#171717']}
+                //start={{ x: 0, y: 0 }}
+                //end={{ x: 1, y: 0 }}
+                style={styles.itemCard}
+              >
+                <Image source={item.image} style={styles.cardImage} />
+                <View style={styles.cardContent}>
+                  <Text style={styles.cardTitle}>{item.name}</Text>
+                  <Text style={styles.cardSubtitle}>{item.description}</Text>
+                  <View style={styles.cardBottom}>
+                    <View style={styles.cardLeft}>
+                      <View style={styles.sizeBox}>
+                        <Text style={styles.sizeText}>{item.meta || 'M'}</Text>
+                      </View>
+                      <Text style={styles.cardPrice}>${item.price.toFixed(2)}</Text>
                     </View>
-                    <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
-                  </View>
-                  <View style={styles.qtyRow}>
-                    <TouchableOpacity style={styles.qtyBtn}>
-                      <Text style={styles.qtyBtnText}>-</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.qtyText}>1</Text>
-                    <TouchableOpacity style={styles.qtyBtn}>
-                      <Text style={styles.qtyBtnText}>+</Text>
-                    </TouchableOpacity>
+                    <View style={styles.quantityControls}>
+                      <TouchableOpacity style={styles.quantityBtn} onPress={() => decreaseQuantity(index)}>
+                        <Text style={styles.quantityBtnText}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.quantityDisplay}>{item.quantity}</Text>
+                      <TouchableOpacity style={styles.quantityBtn} onPress={() => increaseQuantity(index)}>
+                        <Text style={styles.quantityBtnText}>+</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
-              </View>
-
+              </LinearGradient>
             )}
           />
-          <View style={styles.totalRow}>
-            <Text style={styles.totalText}>Total:</Text>
-            <Text style={styles.totalAmount}>${getTotal().toFixed(2)}</Text>
+          <View style={styles.totalContainer}>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalText}>Total:</Text>
+              <Text style={styles.totalAmount}>${getTotal().toFixed(2)}</Text>
+            </View>
           </View>
-          <TouchableOpacity style={styles.clearBtn} onPress={clearCart}>
-            <Text style={styles.clearBtnText}>Clear Cart</Text>
-          </TouchableOpacity>
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
+  itemCard: {
     flexDirection: 'row',
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
     alignItems: 'center',
-    backgroundColor: '#181B23',
-    borderRadius: 18,
-    marginBottom: 20,
-    padding: 14,
-    shadowColor: '#000',
-    shadowOpacity: 0.10,
-    shadowRadius: 10,
-    elevation: 2,
   },
   cardImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 14,
-    marginRight: 18,
-    backgroundColor: '#222',
+    width: 90,
+    height: 90,
+    borderRadius: 16,
+    marginRight: 16,
   },
   cardContent: {
     flex: 1,
-    justifyContent: 'space-between',
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 4,
   },
   cardSubtitle: {
-    fontSize: 13,
-    color: '#aaa',
-    marginBottom: 6,
+    fontSize: 14,
+    color: '#8E8E93',
+    marginBottom: 12,
   },
-  cardMetaRow: {
+  cardBottom: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-    gap: 8,
-  },
-  metaBox: {
-    backgroundColor: '#23242a',
-    borderRadius: 8,
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    marginRight: 8,
-  },
-  metaBoxText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-  cardBottomRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  sizeBox: {
+    backgroundColor: '#2C2C2E',
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  sizeText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '500',
   },
   cardPrice: {
-    color: '#F9A826',
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginRight: 18,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
-  qtyRow: {
+  quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'transparent',
-    borderRadius: 8,
-    overflow: 'hidden',
+    gap: 8,
   },
-  qtyBtn: {
-    backgroundColor: '#F9A826',
-    paddingHorizontal: 13,
-    paddingVertical: 6,
+  quantityBtn: {
+    backgroundColor: '#FF9500',
+    width: 32,
+    height: 32,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  qtyBtnText: {
-    color: '#181B23',
-    fontWeight: 'bold',
+  quantityBtnText: {
+    color: '#FFFFFF',
     fontSize: 18,
+    fontWeight: '600',
   },
-  qtyText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 12,
-    minWidth: 22,
+  quantityDisplay: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    minWidth: 20,
     textAlign: 'center',
   },
   container: {
     flex: 1,
     backgroundColor: '#000',
-    padding: 20,
+    padding: 24,
+    paddingTop: 60, // Ensures content is not under status bar
+    paddingBottom: 90, // Ensures content is not covered by tab bar
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   emptyText: {
     color: '#aaa',
@@ -162,38 +174,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 40,
   },
-  itemRow: {
-    backgroundColor: '#222',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  itemName: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  itemMeta: {
-    color: '#bbb',
-    fontSize: 14,
-    marginTop: 2,
-  },
-  itemPrice: {
-    color: '#F9A826',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 6,
-  },
-  removeBtn: {
-    marginTop: 8,
-    backgroundColor: '#FF6B6B',
-    padding: 8,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-  },
-  removeBtnText: {
-    color: '#fff',
-    fontWeight: 'bold',
+
+  totalContainer: {
+    paddingBottom: 30
   },
   totalRow: {
     flexDirection: 'row',
@@ -214,10 +197,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
   },
+  clearCartTopRight: {
+    position: 'absolute',
+    top: 16,
+    right: 20,
+    zIndex: 10,
+  },
   clearBtn: {
-    marginTop: 24,
     backgroundColor: '#444',
-    padding: 14,
+    padding: 12,
     borderRadius: 16,
     alignItems: 'center',
   },
@@ -225,89 +213,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    backgroundColor: '#181B23',
-    borderRadius: 18,
-    padding: 14,
-    marginBottom: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 2,
-  },
-
-  imagePlaceholder: {
-    width: 80,
-    height: 80,
-    borderRadius: 14,
-    backgroundColor: '#222',
-    marginRight: 16,
-  },
-
-  itemDetails: {
-    flex: 1,
-  },
-
-  itemName: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-
-  metaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-
-  metaBox: {
-    backgroundColor: '#23242a',
-    borderRadius: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-  },
-
-  metaBoxText: {
-    color: '#fff',
-    fontSize: 12,
-  },
-
-  itemPrice: {
-    color: '#F9A826',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-
-  qtyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  qtyBtn: {
-    backgroundColor: '#F9A826',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 8,
-  },
-
-  qtyBtnText: {
-    color: '#181B23',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-
-  qtyText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 12,
-    minWidth: 22,
-    textAlign: 'center',
   },
 
 });

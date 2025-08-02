@@ -37,14 +37,14 @@ const HomeScreen = () => {
 
   const handleItemPress = (item) => {
     console.log('=== HANDLE ITEM PRESS DEBUG ===');
-    console.log('Clicked item:', item);
-    console.log('Item ID:', item.id, 'Type:', typeof item.id);
-    console.log('Selected Category:', selectedCategory);
-    console.log('Item type:', item.type);
-    console.log('Item category:', item.category);
-    console.log('Item categoryId:', item.categoryId);
-    console.log('Item name:', item.name);
-    console.log('================================');
+    // console.log('Clicked item:', item);
+    // console.log('Item ID:', item.id, 'Type:', typeof item.id);
+    // console.log('Selected Category:', selectedCategory);
+    // console.log('Item type:', item.type);
+    // console.log('Item category:', item.category);
+    // console.log('Item categoryId:', item.categoryId);
+    // console.log('Item name:', item.name);
+    // console.log('================================');
 
     // Get the category ID from the item or use the selected category
     const itemCategoryId = item.categoryId || item.category || selectedCategory;

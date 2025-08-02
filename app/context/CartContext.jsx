@@ -26,6 +26,29 @@ export function CartProvider({ children }) {
     });
   };
 
+  // Increase quantity of an item
+  const increaseQuantity = (index) => {
+    setCartItems((prev) => {
+      const updated = [...prev];
+      updated[index].quantity += 1;
+      return updated;
+    });
+  };
+
+  // Decrease quantity of an item
+  const decreaseQuantity = (index) => {
+    setCartItems((prev) => {
+      const updated = [...prev];
+      if (updated[index].quantity > 1) {
+        updated[index].quantity -= 1;
+        return updated;
+      } else {
+        // Remove item if quantity reaches 0
+        return updated.filter((_, i) => i !== index);
+      }
+    });
+  };
+
   // Remove item from cart
   const removeFromCart = (index) => {
     setCartItems((prev) => prev.filter((_, i) => i !== index));
@@ -40,7 +63,7 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart, getTotal }}
+      value={{ cartItems, addToCart, removeFromCart, clearCart, getTotal, increaseQuantity, decreaseQuantity }}
     >
       {children}
     </CartContext.Provider>
