@@ -36,7 +36,7 @@ const HomeScreen = () => {
   // Add this debugging version of handleItemPress to your HomeScreen
 
   const handleItemPress = (item) => {
-    console.log('=== HANDLE ITEM PRESS DEBUG ===');
+    // console.log('=== HANDLE ITEM PRESS DEBUG ===');
     // console.log('Clicked item:', item);
     // console.log('Item ID:', item.id, 'Type:', typeof item.id);
     // console.log('Selected Category:', selectedCategory);

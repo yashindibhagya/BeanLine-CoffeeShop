@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
+  Image,
   PanResponder,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ const { width, height } = Dimensions.get('window');
 
 // Import navigation and cart context like in the first code
 import { getAllItemsFlat } from '@/assets/Data/items/items';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 
@@ -25,7 +27,7 @@ const CoffeeCupSelector = () => {
 
   const [selectedSize, setSelectedSize] = useState('M');
   const [isRotating, setIsRotating] = useState(false);
-  const [quantity, setQuantity] = useState(2);
+  const [quantity, setQuantity] = useState(1);
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,14 +48,14 @@ const CoffeeCupSelector = () => {
 
   // Item loading logic from the first code
   useEffect(() => {
-    console.log('=== DEBUG INFO ===');
-    console.log('Received coffee param:', coffee);
-    console.log('Coffee param type:', typeof coffee);
+    // console.log('=== DEBUG INFO ===');
+    // console.log('Received coffee param:', coffee);
+    // console.log('Coffee param type:', typeof coffee);
 
     // Get all items for debugging
     const allItems = getAllItemsFlat();
-    console.log('Total items found:', allItems.length);
-    console.log('First few items:', allItems.slice(0, 3).map(item => ({ id: item.id, name: item.name, type: typeof item.id })));
+    //  console.log('Total items found:', allItems.length);
+    // console.log('First few items:', allItems.slice(0, 3).map(item => ({ id: item.id, name: item.name, type: typeof item.id })));
 
     // Try different approaches to find the item
     let foundItem = null;
@@ -83,8 +85,6 @@ const CoffeeCupSelector = () => {
       console.log('Found with number conversion:', foundItem ? foundItem.name : 'Not found');
     }
 
-    console.log('Final found item:', foundItem);
-    console.log('==================');
 
     setItem(foundItem);
     setLoading(false);
@@ -278,8 +278,13 @@ const CoffeeCupSelector = () => {
     <View style={styles.container}>
       {/* SECTION 1: Fixed Upper Image Part */}
       <View style={styles.selectorSection}>
-        {/* Background circle */}
-        <View style={styles.backgroundCircle} />
+        <View style={styles.decorativeBackground}>
+          <Image
+            source={require('@/assets/images/background.jpg')} // Replace with your image path
+            style={styles.backgroundImage}
+          />
+          <View style={styles.brownOverlay} />
+        </View>
 
         {/* Size labels */}
         {sizes.map((size) => (
@@ -328,8 +333,11 @@ const CoffeeCupSelector = () => {
         </Animated.View>
       </View>
 
-      {/* SECTION 2: Scrollable Middle Description Section */}
-      <View style={styles.detailsSection}>
+      {/* SECTION 2: Scrollable Middle Description Section with Gradient */}
+      <LinearGradient
+        colors={['#484848', '#171717']} // Dark gradient
+        style={styles.detailsSection}
+      >
         <ScrollView
           style={styles.scrollableContent}
           showsVerticalScrollIndicator={false}
@@ -405,14 +413,17 @@ const CoffeeCupSelector = () => {
             </View>
           </View>
         </ScrollView>
-      </View>
+      </LinearGradient>
 
-      {/* SECTION 3: Fixed Bottom Button */}
-      <View style={styles.fixedButtonContainer}>
+      {/* SECTION 3: Fixed Bottom Button with Gradient */}
+      <LinearGradient
+        colors={['#171717', '#484848']} // Same gradient as description section
+        style={styles.fixedButtonContainer}
+      >
         <TouchableOpacity style={styles.buyButton} onPress={handleAddToCart}>
           <Text style={styles.buyButtonText}>Add to Cart</Text>
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
     </View>
   );
 };
@@ -420,7 +431,7 @@ const CoffeeCupSelector = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5DC',
+    backgroundColor: '#000',
   },
   loadingContainer: {
     flex: 1,
@@ -462,24 +473,47 @@ const styles = StyleSheet.create({
 
   // SECTION 1: Fixed Upper Image Part
   selectorSection: {
-    height: height * 0.45, // Fixed height for upper section
+    height: height * 0.42, // Fixed height for upper section
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#000', // Dark background
+    position: 'relative',
+    overflow: 'hidden', // Hide parts of circle that go outside
   },
-  backgroundCircle: {
+
+  // Background image with overlay
+  decorativeBackground: {
     position: 'absolute',
-    width: 380,
-    height: 380,
-    borderRadius: 1000,
-    borderWidth: 2,
-    borderColor: '#D3D3D3',
-    borderStyle: 'dashed',
+    width: '100%',
+    height: 200,
+    top: -10,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    overflow: 'hidden', // Ensures image respects border radius
+  },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  brownOverlay: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#8B4513',
+    opacity: 0.7, // Adjust opacity to control brown tint intensity
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   cupContainer: {
     width: 10,
     height: 120,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 10, // Ensure cup is above background
   },
   sizeLabel: {
     position: 'absolute',
@@ -499,6 +533,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
+    zIndex: 15, // Above everything including cup
   },
   selectedLabel: {
     borderColor: '#8B4513',
@@ -513,10 +548,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 
-  // SECTION 2: Scrollable Middle Description Section
+  // SECTION 2: Scrollable Middle Description Section with Gradient
   detailsSection: {
     flex: 1, // Takes remaining space between upper and button
-    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
   },
@@ -537,7 +571,7 @@ const styles = StyleSheet.create({
   productTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark gradient
     flex: 1,
   },
   ratingContainer: {
@@ -558,7 +592,7 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark gradient
   },
   aboutSection: {
     marginBottom: 24,
@@ -566,12 +600,12 @@ const styles = StyleSheet.create({
   aboutTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark gradient
     marginBottom: 8,
   },
   aboutText: {
     fontSize: 14,
-    color: '#666',
+    color: '#CCCCCC', // Light gray text for dark gradient
     lineHeight: 20,
     marginBottom: 8,
   },
@@ -586,7 +620,7 @@ const styles = StyleSheet.create({
   sugarTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark gradient
     marginBottom: 12,
   },
   sugarRow: {
@@ -599,9 +633,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: '#D3D3D3',
+    borderColor: '#555555', // Darker border for dark theme
     borderRadius: 15,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#333333', // Dark background for buttons
     alignItems: 'center',
   },
   selectedSugar: {
@@ -609,7 +643,7 @@ const styles = StyleSheet.create({
     borderColor: '#D2691E',
   },
   sugarText: {
-    color: '#666',
+    color: '#CCCCCC', // Light text for dark theme
     fontSize: 12,
     fontWeight: '600',
   },
@@ -627,13 +661,13 @@ const styles = StyleSheet.create({
   },
   volumeLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#CCCCCC', // Light gray text for dark gradient
     marginBottom: 4,
   },
   volumeValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark gradient
   },
   quantitySection: {
     flexDirection: 'row',
@@ -643,7 +677,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#555555', // Darker background for dark theme
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 8,
@@ -651,24 +685,23 @@ const styles = StyleSheet.create({
   quantityButtonText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark theme
   },
   quantityValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#FFFFFF', // White text for dark theme
     minWidth: 20,
     textAlign: 'center',
   },
 
-  // SECTION 3: Fixed Bottom Button
+  // SECTION 3: Fixed Bottom Button with Gradient
   fixedButtonContainer: {
-    backgroundColor: '#FFFFFF',
     paddingHorizontal: 24,
     paddingVertical: 16,
     paddingBottom: 24, // Extra padding for safe area
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: '#333333', // Darker border to match gradient theme
   },
   buyButton: {
     backgroundColor: '#D2691E',
