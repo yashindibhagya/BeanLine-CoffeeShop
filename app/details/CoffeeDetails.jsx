@@ -4,6 +4,7 @@ import {
   Animated,
   Dimensions,
   PanResponder,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -275,7 +276,7 @@ const CoffeeCupSelector = () => {
 
   return (
     <View style={styles.container}>
-      {/* Coffee Cup Selector Section */}
+      {/* SECTION 1: Fixed Upper Image Part */}
       <View style={styles.selectorSection}>
         {/* Background circle */}
         <View style={styles.backgroundCircle} />
@@ -288,7 +289,7 @@ const CoffeeCupSelector = () => {
               styles.sizeLabel,
               {
                 left: width / 2 + size.position.x - 15,
-                top: height / 2 - 100 + size.position.y - 15,
+                top: height / 2 - 200 + size.position.y - 15,
                 transform: [
                   {
                     scale: selectedSize === size.label ? 1.1 : 1.0
@@ -327,79 +328,87 @@ const CoffeeCupSelector = () => {
         </Animated.View>
       </View>
 
-      {/* Product Details Section */}
+      {/* SECTION 2: Scrollable Middle Description Section */}
       <View style={styles.detailsSection}>
-        {/* Product Title and Rating */}
-        <View style={styles.headerRow}>
-          <Text style={styles.productTitle}>{item.name}</Text>
-          <View style={styles.ratingContainer}>
-            <View style={styles.ratingBadge}>
-              <Text style={styles.ratingText}>★ 4.5</Text>
+        <ScrollView
+          style={styles.scrollableContent}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContentContainer}
+        >
+          {/* Product Title and Rating */}
+          <View style={styles.headerRow}>
+            <Text style={styles.productTitle}>{item.name}</Text>
+            <View style={styles.ratingContainer}>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.ratingText}>★ {item.rating}</Text>
+              </View>
+              <Text style={styles.priceText}>$ {item.price}</Text>
             </View>
-            <Text style={styles.priceText}>$ {item.price}</Text>
           </View>
-        </View>
 
-        {/* About Section */}
-        <View style={styles.aboutSection}>
-          <Text style={styles.aboutTitle}>About</Text>
-          <Text style={styles.aboutText}>
-            {item.description}
-          </Text>
-          <TouchableOpacity>
-            <Text style={styles.readMoreText}>Read more</Text>
-          </TouchableOpacity>
-        </View>
+          {/* About Section */}
+          <View style={styles.aboutSection}>
+            <Text style={styles.aboutTitle}>About</Text>
+            <Text style={styles.aboutText}>
+              {item.description}
+            </Text>
+            <TouchableOpacity>
+              <Text style={styles.readMoreText}>Read more</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* Sugar Level Section - Added from first code */}
-        <View style={styles.sugarSection}>
-          <Text style={styles.sugarTitle}>Sugar Level</Text>
-          <View style={styles.sugarRow}>
-            {sugarLevels.map(level => (
+          {/* Sugar Level Section */}
+          <View style={styles.sugarSection}>
+            <Text style={styles.sugarTitle}>Sugar Level</Text>
+            <View style={styles.sugarRow}>
+              {sugarLevels.map(level => (
+                <TouchableOpacity
+                  key={level}
+                  style={[
+                    styles.sugarButton,
+                    selectedSugar === level && styles.selectedSugar
+                  ]}
+                  onPress={() => setSelectedSugar(level)}
+                >
+                  <Text style={[
+                    styles.sugarText,
+                    selectedSugar === level && styles.selectedSugarText
+                  ]}>
+                    {level.split(' ')[0]}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Volume and Quantity */}
+          <View style={styles.volumeQuantityRow}>
+            <View style={styles.volumeSection}>
+              <Text style={styles.volumeLabel}>Volume</Text>
+              <Text style={styles.volumeValue}>{getCurrentSize().volume}</Text>
+            </View>
+
+            <View style={styles.quantitySection}>
               <TouchableOpacity
-                key={level}
-                style={[
-                  styles.sugarButton,
-                  selectedSugar === level && styles.selectedSugar
-                ]}
-                onPress={() => setSelectedSugar(level)}
+                style={styles.quantityButton}
+                onPress={decrementQuantity}
               >
-                <Text style={[
-                  styles.sugarText,
-                  selectedSugar === level && styles.selectedSugarText
-                ]}>
-                  {level.split(' ')[0]}
-                </Text>
+                <Text style={styles.quantityButtonText}>-</Text>
               </TouchableOpacity>
-            ))}
+              <Text style={styles.quantityValue}>{quantity}</Text>
+              <TouchableOpacity
+                style={styles.quantityButton}
+                onPress={incrementQuantity}
+              >
+                <Text style={styles.quantityButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ScrollView>
+      </View>
 
-        {/* Volume and Quantity */}
-        <View style={styles.volumeQuantityRow}>
-          <View style={styles.volumeSection}>
-            <Text style={styles.volumeLabel}>Volume</Text>
-            <Text style={styles.volumeValue}>{getCurrentSize().volume}</Text>
-          </View>
-
-          <View style={styles.quantitySection}>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={decrementQuantity}
-            >
-              <Text style={styles.quantityButtonText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.quantityValue}>{quantity}</Text>
-            <TouchableOpacity
-              style={styles.quantityButton}
-              onPress={incrementQuantity}
-            >
-              <Text style={styles.quantityButtonText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Add to Cart Button - Changed from "Buy now" to match first code */}
+      {/* SECTION 3: Fixed Bottom Button */}
+      <View style={styles.fixedButtonContainer}>
         <TouchableOpacity style={styles.buyButton} onPress={handleAddToCart}>
           <Text style={styles.buyButtonText}>Add to Cart</Text>
         </TouchableOpacity>
@@ -450,8 +459,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+
+  // SECTION 1: Fixed Upper Image Part
   selectorSection: {
-    flex: 0.6,
+    height: height * 0.45, // Fixed height for upper section
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -465,7 +476,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed',
   },
   cupContainer: {
-    width: 120,
+    width: 10,
     height: 120,
     justifyContent: 'center',
     alignItems: 'center',
@@ -501,14 +512,21 @@ const styles = StyleSheet.create({
   selectedLabelText: {
     color: '#FFFFFF',
   },
+
+  // SECTION 2: Scrollable Middle Description Section
   detailsSection: {
-    flex: 0.4,
+    flex: 1, // Takes remaining space between upper and button
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+  },
+  scrollableContent: {
+    flex: 1,
+  },
+  scrollContentContainer: {
     paddingHorizontal: 24,
     paddingTop: 24,
-    paddingBottom: 20,
+    paddingBottom: 20, // Extra padding at bottom for better scroll experience
   },
   headerRow: {
     flexDirection: 'row',
@@ -543,7 +561,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   aboutSection: {
-    marginBottom: 16,
+    marginBottom: 24,
   },
   aboutTitle: {
     fontSize: 18,
@@ -563,25 +581,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sugarSection: {
-    marginBottom: 16,
+    marginBottom: 24,
   },
   sugarTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   sugarRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 8,
   },
   sugarButton: {
-    paddingVertical: 6,
+    flex: 1,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: '#D3D3D3',
     borderRadius: 15,
     backgroundColor: '#F9F9F9',
+    alignItems: 'center',
   },
   selectedSugar: {
     backgroundColor: '#D2691E',
@@ -599,7 +620,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   volumeSection: {
     flex: 1,
@@ -639,11 +660,29 @@ const styles = StyleSheet.create({
     minWidth: 20,
     textAlign: 'center',
   },
+
+  // SECTION 3: Fixed Bottom Button
+  fixedButtonContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    paddingBottom: 24, // Extra padding for safe area
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
   buyButton: {
     backgroundColor: '#D2691E',
     paddingVertical: 16,
     borderRadius: 25,
     alignItems: 'center',
+    shadowColor: '#D2691E',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   buyButtonText: {
     color: 'white',
