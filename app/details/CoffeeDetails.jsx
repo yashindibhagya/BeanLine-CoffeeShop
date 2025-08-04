@@ -362,9 +362,6 @@ const CoffeeCupSelector = () => {
             <Text style={styles.aboutText}>
               {item.description}
             </Text>
-            <TouchableOpacity>
-              <Text style={styles.readMoreText}>Read more</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Sugar Level Section */}
@@ -610,11 +607,6 @@ const styles = StyleSheet.create({
     color: '#CCCCCC', // Light gray text for dark gradient
     lineHeight: 20,
     marginBottom: 8,
-  },
-  readMoreText: {
-    fontSize: 14,
-    color: '#D2691E',
-    fontWeight: '600',
   },
   sugarSection: {
     marginBottom: 24,
