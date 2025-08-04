@@ -345,11 +345,13 @@ const CoffeeCupSelector = () => {
         >
           {/* Product Title and Rating */}
           <View style={styles.headerRow}>
-            <Text style={styles.productTitle}>{item.name}</Text>
             <View style={styles.ratingContainer}>
               <View style={styles.ratingBadge}>
                 <Text style={styles.ratingText}>★ {item.rating}</Text>
               </View>
+              <Text style={styles.productTitle}>{item.name}</Text>
+            </View>
+            <View style={styles.ratingContainer}>
               <Text style={styles.priceText}>$ {item.price}</Text>
             </View>
           </View>
@@ -575,7 +577,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ratingContainer: {
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   ratingBadge: {
     backgroundColor: '#D2691E',
@@ -590,7 +592,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   priceText: {
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#FFFFFF', // White text for dark gradient
   },
