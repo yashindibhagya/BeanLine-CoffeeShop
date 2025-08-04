@@ -29,20 +29,6 @@ export const pastriesItems = [
     },
     {
         id: "p3",
-        name: "Chocolate Danish",
-        description: "Rich chocolate-filled Danish pastry",
-        price: 3.50,
-        image: require('../../../assets/images/coffee.jpg'),
-        category: "4",
-        rating: 4.8,
-        preparationTime: "Ready to serve",
-        ingredients: ["Puff Pastry", "Dark Chocolate", "Butter", "Sugar"],
-        allergens: ["Gluten", "Dairy"],
-        calories: 295,
-        freshness: "Baked Today"
-    },
-    {
-        id: "p4",
         name: "Cinnamon Roll",
         description: "Warm cinnamon roll with cream cheese glaze",
         price: 3.75,

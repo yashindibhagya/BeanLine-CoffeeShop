@@ -130,7 +130,7 @@ const HomeScreen = () => {
     >
       <StatusBar backgroundColor="#000" barStyle="light-content" />
       <ScrollView
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={[styles.scrollContainer, { paddingBottom: 60 }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
