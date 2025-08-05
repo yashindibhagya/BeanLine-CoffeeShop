@@ -1,6 +1,6 @@
-import React from 'react';
-import { useCart } from '../../app/context/CartContext';
+import React, { useEffect, useState } from 'react';
 import {
+    Animated,
     Dimensions,
     Image,
     StyleSheet,
@@ -9,12 +9,57 @@ import {
     View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useCart } from '../../app/context/CartContext';
 
 const { width } = Dimensions.get('window');
 
 const ItemCard = ({ item, onPress, onFavoritePress }) => {
-    const { addToCart } = useCart();
-    const handleAddToCart = () => addToCart({ ...item, quantity: 1 });
+    const { addToCart, removeFromCart, cart } = useCart();
+    const [showPopup, setShowPopup] = useState(false);
+    const [fadeAnim] = useState(new Animated.Value(0));
+    const [localQuantity, setLocalQuantity] = useState(0);
+
+    // Get current quantity from cart
+    useEffect(() => {
+        if (cart && Array.isArray(cart)) {
+            const cartItem = cart.find(cartItem => cartItem.id === item.id);
+            setLocalQuantity(cartItem ? cartItem.quantity : 0);
+        } else {
+            setLocalQuantity(0);
+        }
+    }, [cart, item.id]);
+
+    const showPopupAnimation = (message) => {
+        setShowPopup(message);
+        Animated.sequence([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+            Animated.delay(1500),
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            })
+        ]).start(() => {
+            setShowPopup(false);
+        });
+    };
+
+    const handleAddToCart = () => {
+        addToCart({ ...item, quantity: 1 });
+        showPopupAnimation('Added to cart!');
+    };
+
+    const handleRemoveFromCart = () => {
+        if (localQuantity > 0) {
+            removeFromCart(item.id);
+            showPopupAnimation('Removed from cart!');
+        }
+    };
+
     return (
         <TouchableOpacity style={styles.itemCard} onPress={() => onPress?.(item)}>
             <View style={styles.imageContainer}>
@@ -42,14 +87,60 @@ const ItemCard = ({ item, onPress, onFavoritePress }) => {
                         <Icon name="star" size={16} color="#FFD700" />
                         <Text style={styles.ratingText}>{item.rating}</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={handleAddToCart}
-                    >
-                        <Icon name="add" size={20} color="#FFD700" />
-                    </TouchableOpacity>
+
+                    {/* Quantity Controls */}
+                    <View style={styles.quantityContainer}>
+                        {localQuantity > 0 && (
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={handleRemoveFromCart}
+                            >
+                                <Icon name="remove" size={16} color="#FFD700" />
+                            </TouchableOpacity>
+                        )}
+
+                        {localQuantity > 0 && (
+                            <View style={styles.quantityDisplay}>
+                                <Text style={styles.quantityText}>{localQuantity}</Text>
+                            </View>
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={handleAddToCart}
+                        >
+                            <Icon name="add" size={16} color="#FFD700" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
+
+            {/* Popup notification */}
+            {showPopup && (
+                <Animated.View
+                    style={[
+                        styles.popupContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{
+                                translateY: fadeAnim.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [20, 0]
+                                })
+                            }]
+                        }
+                    ]}
+                >
+                    <View style={styles.popup}>
+                        <Icon
+                            name={showPopup === 'Added to cart!' ? "check-circle" : "remove-circle"}
+                            size={18}
+                            color={showPopup === 'Added to cart!' ? "#4CAF50" : "#FF5722"}
+                        />
+                        <Text style={styles.popupText}>{showPopup}</Text>
+                    </View>
+                </Animated.View>
+            )}
         </TouchableOpacity>
     );
 };
@@ -63,6 +154,7 @@ const styles = StyleSheet.create({
         width: (width - 60) / 2,
         marginBottom: 20,
         overflow: 'hidden',
+        position: 'relative',
     },
     imageContainer: {
         position: 'relative',
@@ -78,11 +170,8 @@ const styles = StyleSheet.create({
     priceOverlay: {
         position: 'absolute',
         bottom: 0,
-        //left: 12,
-        // borderRadius: 8,
         overflow: 'hidden',
         width: '100%',
-
     },
     priceContainer: {
         backgroundColor: 'rgba(0, 0, 0, 0.73)',
@@ -103,7 +192,6 @@ const styles = StyleSheet.create({
         marginLeft: 2,
     },
     itemInfo: {
-        // padding: 16,
         top: 8,
         marginBottom: 10
     },
@@ -115,7 +203,6 @@ const styles = StyleSheet.create({
     categoryIcon: {
         width: 20,
         height: 20,
-        // marginRight: 8,
         borderRadius: 10,
     },
     itemName: {
@@ -127,7 +214,6 @@ const styles = StyleSheet.create({
     itemLocation: {
         fontSize: 12,
         color: '#888',
-        //  marginBottom: 12,
     },
     itemFooter: {
         flexDirection: 'row',
@@ -143,7 +229,6 @@ const styles = StyleSheet.create({
         width: 60,
         height: 25,
         justifyContent: 'center',
-
     },
     ratingText: {
         fontSize: 14,
@@ -159,6 +244,62 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        //borderColor: '#D2691E',
+    },
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#21211F',
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 215, 0, 0.3)',
+    },
+    quantityButton: {
+        width: 28,
+        height: 28,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 14,
+    },
+    quantityDisplay: {
+        minWidth: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 6,
+    },
+    quantityText: {
+        color: '#FFD700',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    popupContainer: {
+        position: 'absolute',
+        top: '45%',
+        left: '50%',
+        transform: [{ translateX: -60 }, { translateY: -12 }],
+        zIndex: 1000,
+    },
+    popup: {
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#4CAF50',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    popupText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+        marginLeft: 6,
     },
 });

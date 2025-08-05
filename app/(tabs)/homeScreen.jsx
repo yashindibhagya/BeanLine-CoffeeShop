@@ -185,9 +185,7 @@ const HomeScreen = () => {
         {/* Items Section */}
         <View style={styles.itemsSection}>
           <View style={styles.itemsHeader}>
-            <Text style={styles.itemsSectionTitle}>
-              {categories.find(cat => cat.id === selectedCategory)?.title}
-            </Text>
+
           </View>
 
           {selectedCategoryItems.length > 0 ? (
@@ -290,14 +288,7 @@ const styles = StyleSheet.create({
   category: {
     paddingLeft: 24
   },
-  categoryHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    marginTop: 20,
-    marginBottom: 15,
-  },
+
   categoriesList: {
     //marginBottom: 20,
   },
@@ -358,13 +349,13 @@ const styles = StyleSheet.create({
   // Items section styles
   itemsSection: {
     paddingHorizontal: 24,
-    marginTop: 20,
+    marginTop: -20,
   },
   itemsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 40,
   },
   itemsSectionTitle: {
     fontSize: 20,

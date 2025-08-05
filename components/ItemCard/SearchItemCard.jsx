@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Animated,
     Dimensions,
@@ -14,15 +14,23 @@ import { useCart } from '../../app/context/CartContext';
 const { width } = Dimensions.get('window');
 
 const ItemCard = ({ item, onPress, onFavoritePress }) => {
-    const { addToCart } = useCart();
+    const { addToCart, removeFromCart, cart } = useCart();
     const [showPopup, setShowPopup] = useState(false);
     const [fadeAnim] = useState(new Animated.Value(0));
+    const [localQuantity, setLocalQuantity] = useState(0);
 
-    const handleAddToCart = () => {
-        addToCart({ ...item, quantity: 1 });
+    // Get current quantity from cart
+    useEffect(() => {
+        if (cart && Array.isArray(cart)) {
+            const cartItem = cart.find(cartItem => cartItem.id === item.id);
+            setLocalQuantity(cartItem ? cartItem.quantity : 0);
+        } else {
+            setLocalQuantity(0);
+        }
+    }, [cart, item.id]);
 
-        // Show popup animation
-        setShowPopup(true);
+    const showPopupAnimation = (message) => {
+        setShowPopup(message);
         Animated.sequence([
             Animated.timing(fadeAnim, {
                 toValue: 1,
@@ -38,6 +46,18 @@ const ItemCard = ({ item, onPress, onFavoritePress }) => {
         ]).start(() => {
             setShowPopup(false);
         });
+    };
+
+    const handleAddToCart = () => {
+        addToCart({ ...item, quantity: 1 });
+        showPopupAnimation('Added to cart!');
+    };
+
+    const handleRemoveFromCart = () => {
+        if (localQuantity > 0) {
+            removeFromCart(item.id);
+            showPopupAnimation('Removed from cart!');
+        }
     };
 
     return (
@@ -67,12 +87,31 @@ const ItemCard = ({ item, onPress, onFavoritePress }) => {
                         <Icon name="star" size={16} color="#FFD700" />
                         <Text style={styles.ratingText}>{item.rating}</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.addButton}
-                        onPress={handleAddToCart}
-                    >
-                        <Icon name="add" size={20} color="#FFD700" />
-                    </TouchableOpacity>
+
+                    {/* Quantity Controls */}
+                    <View style={styles.quantityContainer}>
+                        {localQuantity > 0 && (
+                            <TouchableOpacity
+                                style={styles.quantityButton}
+                                onPress={handleRemoveFromCart}
+                            >
+                                <Icon name="remove" size={18} color="#FFD700" />
+                            </TouchableOpacity>
+                        )}
+
+                        {localQuantity > 0 && (
+                            <View style={styles.quantityDisplay}>
+                                <Text style={styles.quantityText}>{localQuantity}</Text>
+                            </View>
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.quantityButton}
+                            onPress={handleAddToCart}
+                        >
+                            <Icon name="add" size={18} color="#FFD700" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
 
@@ -93,8 +132,12 @@ const ItemCard = ({ item, onPress, onFavoritePress }) => {
                     ]}
                 >
                     <View style={styles.popup}>
-                        <Icon name="check-circle" size={20} color="#4CAF50" />
-                        <Text style={styles.popupText}>Added to cart!</Text>
+                        <Icon
+                            name={showPopup === 'Added to cart!' ? "check-circle" : "remove-circle"}
+                            size={20}
+                            color={showPopup === 'Added to cart!' ? "#4CAF50" : "#FF5722"}
+                        />
+                        <Text style={styles.popupText}>{showPopup}</Text>
                     </View>
                 </Animated.View>
             )}
@@ -201,6 +244,32 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
+    },
+    quantityContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#21211F',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 215, 0, 0.3)',
+    },
+    quantityButton: {
+        width: 32,
+        height: 32,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 16,
+    },
+    quantityDisplay: {
+        minWidth: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 8,
+    },
+    quantityText: {
+        color: '#FFD700',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     popupContainer: {
         position: 'absolute',

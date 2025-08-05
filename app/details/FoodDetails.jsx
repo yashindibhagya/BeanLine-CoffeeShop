@@ -10,6 +10,8 @@ import {
   View
 } from 'react-native';
 
+import ItemCard from '@/components/ItemCard/ItemCard';
+
 const { width, height } = Dimensions.get('window'); // Fixed: Added height
 
 // Import navigation and cart context like in the first code
@@ -154,6 +156,7 @@ const FoodDetails = () => {
             </View>
           </View>
 
+
           {/* About Section */}
           <View style={styles.aboutSection}>
             <Text style={styles.aboutTitle}>About</Text>
@@ -165,6 +168,7 @@ const FoodDetails = () => {
           {/* Volume and Quantity */}
           <View style={styles.volumeQuantityRow}>
             <View style={styles.quantitySection}>
+
               <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={decrementQuantity}
@@ -180,6 +184,24 @@ const FoodDetails = () => {
               </TouchableOpacity>
             </View>
           </View>
+
+          {/* Related Items Section */}
+          {item && item.category && (
+            <View style={{ marginTop: 24 }}>
+              <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>
+                Other items in this category
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {getAllItemsFlat()
+                  .filter(i => i.category === item.category && i.id !== item.id)
+                  .map(related => (
+                    <View key={related.id} style={{ marginRight: 16 }}>
+                      <ItemCard item={related} />
+                    </View>
+                  ))}
+              </ScrollView>
+            </View>
+          )}
         </ScrollView>
       </LinearGradient>
 
