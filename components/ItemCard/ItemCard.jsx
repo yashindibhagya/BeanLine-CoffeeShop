@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCart } from '../../app/context/CartContext';
 import {
     Dimensions,
     Image,
@@ -11,7 +12,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const { width } = Dimensions.get('window');
 
-const ItemCard = ({ item, onPress, onAddPress, onFavoritePress }) => {
+const ItemCard = ({ item, onPress, onFavoritePress }) => {
+    const { addToCart } = useCart();
+    const handleAddToCart = () => addToCart({ ...item, quantity: 1 });
     return (
         <TouchableOpacity style={styles.itemCard} onPress={() => onPress?.(item)}>
             <View style={styles.imageContainer}>
@@ -41,7 +44,7 @@ const ItemCard = ({ item, onPress, onAddPress, onFavoritePress }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.addButton}
-                        onPress={() => onAddPress?.(item)}
+                        onPress={handleAddToCart}
                     >
                         <Icon name="add" size={20} color="#FFD700" />
                     </TouchableOpacity>
