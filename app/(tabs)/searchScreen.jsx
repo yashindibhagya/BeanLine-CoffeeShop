@@ -1,33 +1,51 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
+    Animated,
     Dimensions,
     FlatList,
     SafeAreaView,
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 
 import { categories } from '@/assets/Data/categories';
 import { getItemsByCategory, searchItems } from '@/assets/Data/items/items';
-//import ItemCard from '@/components/ItemCard/ItemCard';
-import ItemCard from '@/components/ItemCard/SearchItemCard'; // Updated import for SearchItemCard
-import { useRouter } from 'expo-router'; // <-- Add this import
+import ItemCard from '@/components/ItemCard/SearchItemCard';
+import { useRouter } from 'expo-router';
 
-const { width } = Dimensions.get('window');
-const STATUS_BAR_HEIGHT = StatusBar.currentHeight || 130; // default safe value
+const { width, height } = Dimensions.get('window');
+const SIDEBAR_WIDTH = 85;
 
-export default function SidebarCategories() {
+export default function ModernSidebarCategories() {
+    // New state for Coffee/Food tab
+    const [selectedTab, setSelectedTab] = useState('coffee');
+
+    // Helper: coffee and food category IDs (update as needed)
+    const coffeeCategoryIds = ['1', '2', '3'];
+    const isCoffeeCategory = (cat) => coffeeCategoryIds.includes(String(cat.id));
+    const foodCategoryIds = categories.map(cat => cat.id).filter(id => !coffeeCategoryIds.includes(id));
+
+    // Filtered categories for sidebar
+    const filteredCategories = selectedTab === 'coffee'
+        ? categories.filter(isCoffeeCategory)
+        : categories.filter(cat => !isCoffeeCategory(cat));
+
+    // When switching tab, reset selectedCategory to first of filtered
+    React.useEffect(() => {
+        if (filteredCategories.length > 0) {
+            setSelectedCategory(filteredCategories[0].id);
+        }
+    }, [selectedTab]);
     const [selectedCategory, setSelectedCategory] = useState('1');
     const [searchQuery, setSearchQuery] = useState('');
-    const router = useRouter(); // <-- Add this
+    const [animatedValue] = useState(new Animated.Value(0));
+    const router = useRouter();
 
-    // Navigation handler similar to HomeScreen
     const handleItemPress = (item) => {
         const type = (item.type || item.category || '').toLowerCase();
         const coffeeCategories = ['1', '2', '3'];
@@ -46,94 +64,258 @@ export default function SidebarCategories() {
         }
     };
 
-
     const handleCategorySelect = (id) => {
         setSelectedCategory(id);
         setSearchQuery('');
+
+        // Trigger animation
+        Animated.spring(animatedValue, {
+            toValue: 1,
+            tension: 100,
+            friction: 8,
+            useNativeDriver: true,
+        }).start(() => {
+            animatedValue.setValue(0);
+        });
     };
 
-    const items = searchQuery
+    // Filter items based on selectedTab (coffee or food)
+    let allItems = searchQuery
         ? searchItems(searchQuery, selectedCategory)
         : getItemsByCategory(selectedCategory);
+    
+    // You may need to adjust this filter logic based on your data structure
+    const isCoffee = (item) => coffeeCategoryIds.includes(String(item.categoryId || item.category));
+    const items = selectedTab === 'coffee' ? allItems.filter(isCoffee) : allItems.filter(item => !isCoffee(item));
 
-    const title = categories.find((cat) => cat.id === selectedCategory)?.title;
+    const selectedCategoryData = categories.find((cat) => cat.id === selectedCategory);
+
+    const renderCategoryItem = ({ item, index }) => {
+        const isActive = selectedCategory === item.id;
+        const scale = animatedValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, isActive ? 1.1 : 1],
+        });
+
+        return (
+            <Animated.View style={{ transform: [{ scale }] }}>
+                <TouchableOpacity
+                    onPress={() => handleCategorySelect(item.id)}
+                    style={[
+                        styles.categoryButton,
+                        isActive && styles.activeCategoryButton,
+                    ]}
+                    activeOpacity={0.7}
+                >
+                    {isActive && (
+                        <View style={styles.activeBackground} />
+                    )}
+
+                    <View style={styles.iconContainer}>
+                        <MaterialIcons
+                            name={item.icon}
+                            size={26}
+                            color={isActive ? '#D2691E' : '#FFFFFF'}
+                            style={styles.categoryIconStyle}
+                        />
+                    </View>
+
+                    <Text
+                        style={[
+                            styles.categoryText,
+                            isActive && styles.activeCategoryText,
+                        ]}
+                        numberOfLines={2}
+                    >
+                        {item.title}
+                    </Text>
+
+                    {isActive && <View style={styles.activeIndicator} />}
+                </TouchableOpacity>
+            </Animated.View>
+        );
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar backgroundColor="#000" barStyle="light-content" />
+            <StatusBar backgroundColor="#D0F3DA" barStyle="dark-content" />
+
+            {/* Top Coffee/Food Toggle Bar */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, marginHorizontal: 16 }}>
+                <TouchableOpacity
+                    onPress={() => setSelectedTab('coffee')}
+                    style={{
+                        backgroundColor: selectedTab === 'coffee' ? '#D2691E' : '#fff',
+                        borderRadius: 20,
+                        padding: 8,
+                        borderWidth: 1,
+                        borderColor: '#D2691E',
+                    }}
+                >
+                    <MaterialIcons name="local-cafe" size={22} color={selectedTab === 'coffee' ? '#fff' : '#D2691E'} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => setSelectedTab('food')}
+                    style={{
+                        backgroundColor: selectedTab === 'food' ? '#D2691E' : '#fff',
+                        borderRadius: 20,
+                        padding: 8,
+                        borderWidth: 1,
+                        borderColor: '#D2691E',
+                    }}
+                >
+                    <MaterialIcons name="lunch-dining" size={22} color={selectedTab === 'food' ? '#fff' : '#D2691E'} />
+                </TouchableOpacity>
+            </View>
+
             <View style={styles.container}>
-
-                {/* Sidebar */}
-                <View style={styles.sidebar}>
-                    <ScrollView
-                        contentContainerStyle={[
-                            styles.sidebarIcons,
-                            { paddingTop: STATUS_BAR_HEIGHT, paddingBottom: 80 }, // reserve for navbar
-                        ]}
-                        showsVerticalScrollIndicator={false}
+                {/* Top Coffee/Food Toggle */}
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 10, marginRight: 10 }}>
+                    <TouchableOpacity
+                        onPress={() => setSelectedTab('coffee')}
+                        style={{
+                            backgroundColor: selectedTab === 'coffee' ? '#D2691E' : '#fff',
+                            borderRadius: 20,
+                            padding: 8,
+                            marginRight: 8,
+                            borderWidth: 1,
+                            borderColor: '#D2691E',
+                        }}
                     >
-                        {categories.map((cat) => (
-                            <TouchableOpacity
-                                key={cat.id}
-                                onPress={() => handleCategorySelect(cat.id)}
-                                style={[
-                                    styles.categoryIcon,
-                                    selectedCategory === cat.id && styles.activeCategoryIcon,
-                                ]}
-                            >
-                                <View style={styles.iconWrapper}>
-                                    <MaterialIcons
-                                        name={cat.icon}
-                                        size={24}
-                                        style={styles.icon}
-                                        color={selectedCategory === cat.id ? '#D2691E' : '#fff'}
-                                    />
-                                    <Text
-                                        style={[
-                                            styles.iconText,
-                                            selectedCategory === cat.id && styles.activeIconText,
-                                        ]}
-                                    >
-                                        {cat.title}
-                                    </Text>
+                        <MaterialIcons name="local-cafe" size={22} color={selectedTab === 'coffee' ? '#fff' : '#D2691E'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setSelectedTab('food')}
+                        style={{
+                            backgroundColor: selectedTab === 'food' ? '#D2691E' : '#fff',
+                            borderRadius: 20,
+                            padding: 8,
+                            borderWidth: 1,
+                            borderColor: '#D2691E',
+                        }}
+                    >
+                        <MaterialIcons name="lunch-dining" size={22} color={selectedTab === 'food' ? '#fff' : '#D2691E'} />
+                    </TouchableOpacity>
+                </View>
+                {/* Modern Sidebar with Brown Theme */}
+                <View style={styles.sidebar}>
+                    <View style={styles.sidebarContent}>
+                        {/* Sidebar Header */}
+                        <View style={styles.sidebarHeader}>
+                            <View style={styles.logoContainer}>
+                                <View style={styles.logoCircle}>
+                                    <MaterialIcons name="restaurant-menu" size={20} color="#FFFFFF" />
                                 </View>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
+                            </View>
+                        </View>
 
+                        {/* Categories List */}
+                        <FlatList
+                            data={filteredCategories}
+                            keyExtractor={(item) => item.id}
+                            renderItem={renderCategoryItem}
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={styles.categoriesList}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        />
+
+                        {/* Sidebar Footer */}
+                        <View style={styles.sidebarFooter}>
+                            <TouchableOpacity style={styles.settingsButton} activeOpacity={0.7}>
+                                <MaterialIcons name="settings" size={22} color="#FFFFFF" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
 
-                {/* Content */}
+                {/* Main Content */}
                 <View style={styles.content}>
+                    {/* Header Section */}
+                    <View style={styles.contentHeader}>
+                        <View style={styles.headerInfo}>
+                            <Text style={styles.categoryTitle}>
+                                {selectedCategoryData?.title || 'All Items'}
+                            </Text>
+                            <Text style={styles.itemCount}>
+                                {items.length} items available
+                            </Text>
+                        </View>
 
-                    {/* Search Input (always visible) */}
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Search items..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                    />
+                        <View style={styles.categoryIconBadge}>
+                            <View style={styles.categoryIconBadgeCircle}>
+                                <MaterialIcons
+                                    name={selectedCategoryData?.icon || 'restaurant'}
+                                    size={20}
+                                    color="#FFFFFF"
+                                />
+                            </View>
+                        </View>
+                    </View>
 
-                    {/* Grid */}
+                    {/* Modern Search Bar */}
+                    <View style={styles.searchContainer}>
+                        <View style={styles.searchInputWrapper}>
+                            <MaterialIcons
+                                name="search"
+                                size={20}
+                                color="#94A3B8"
+                                style={styles.searchIcon}
+                            />
+                            <TextInput
+                                style={styles.searchInput}
+                                placeholder="Search for delicious items..."
+                                placeholderTextColor="#94A3B8"
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                            />
+                            {searchQuery.length > 0 && (
+                                <TouchableOpacity
+                                    onPress={() => setSearchQuery('')}
+                                    style={styles.clearButton}
+                                >
+                                    <MaterialIcons name="close" size={18} color="#94A3B8" />
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Items Grid */}
                     <FlatList
                         data={items}
                         numColumns={1}
                         keyExtractor={(item) => item.id}
-                        key={'single-column'}
-                        //columnWrapperStyle={styles.grid}
                         contentContainerStyle={styles.itemsList}
-                        renderItem={({ item }) => (
-                            <View style={styles.cardContainer}>
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item, index }) => (
+                            <Animated.View
+                                style={[
+                                    styles.cardContainer,
+                                    {
+                                        opacity: animatedValue.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [1, 0.95],
+                                        }),
+                                    },
+                                ]}
+                            >
                                 <ItemCard
                                     item={item}
                                     onPress={() => handleItemPress(item)}
                                     onAddPress={() => console.log('Add to cart:', item.name)}
-                                    style={styles.card}
+                                    style={styles.itemCard}
                                 />
+                            </Animated.View>
+                        )}
+                        ListEmptyComponent={() => (
+                            <View style={styles.emptyState}>
+                                <MaterialIcons name="search-off" size={48} color="#CBD5E1" />
+                                <Text style={styles.emptyTitle}>No items found</Text>
+                                <Text style={styles.emptySubtitle}>
+                                    Try adjusting your search or browse different categories
+                                </Text>
                             </View>
                         )}
                     />
-
                 </View>
             </View>
         </SafeAreaView>
@@ -149,97 +331,247 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#000',
-        paddingTop: STATUS_BAR_HEIGHT,
     },
+
+    // Sidebar Styles - Updated to Brown Theme
     sidebar: {
-        width: 70,
-        backgroundColor: '#D2691E', // Brown background
-        alignItems: 'center',
-        paddingVertical: 20,
+        width: SIDEBAR_WIDTH,
+        backgroundColor: '#D2691E', // Brown background like second code
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 0 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 5,
+        zIndex: 10,
         borderTopRightRadius: 20,
         borderBottomRightRadius: 20,
     },
-    sidebarIcons: {
-        alignItems: 'center',
-
+    sidebarContent: {
+        flex: 1,
+        paddingVertical: 20,
     },
-    categoryIcon: {
-        width: 50,
-        height: 100,
-        borderRadius: 24,
-        borderWidth: 1,
-        borderColor: '#fff',
-        backgroundColor: '#D2691E',
+    sidebarHeader: {
+        alignItems: 'center',
+        marginBottom: 30,
+        paddingHorizontal: 15,
+    },
+    logoContainer: {
+        marginBottom: 10,
+    },
+    logoCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: '#B8621E', // Darker brown for contrast
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 16,
-        paddingVertical: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 8,
+    },
 
+    // Category Styles - Updated for Brown Theme
+    categoriesList: {
+        paddingHorizontal: 12,
+        flexGrow: 1,
     },
-    activeCategoryIcon: {
-        backgroundColor: '#fff',
+    categoryButton: {
+        height: 70,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 6,
+        backgroundColor: 'transparent',
+        position: 'relative',
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#FFFFFF',
     },
+    activeCategoryButton: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 8,
+        borderColor: '#FFFFFF',
+    },
+    activeBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+    },
+    iconContainer: {
+        marginBottom: 4,
+    },
+    categoryIconStyle: {
+        marginBottom: 2,
+    },
+    categoryText: {
+        fontSize: 10,
+        fontWeight: '500',
+        color: '#FFFFFF',
+        textAlign: 'center',
+        lineHeight: 12,
+        letterSpacing: 0.3,
+    },
+    activeCategoryText: {
+        color: '#D2691E',
+        fontWeight: '600',
+    },
+    activeIndicator: {
+        position: 'absolute',
+        right: -1,
+        top: '50%',
+        width: 3,
+        height: 20,
+        backgroundColor: '#FFFFFF',
+        borderTopLeftRadius: 2,
+        borderBottomLeftRadius: 2,
+        transform: [{ translateY: -10 }],
+    },
+    separator: {
+        height: 8,
+    },
+
+    // Sidebar Footer
+    sidebarFooter: {
+        alignItems: 'center',
+        paddingTop: 20,
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(255, 255, 255, 0.2)',
+        marginTop: 20,
+        marginHorizontal: 12,
+    },
+    settingsButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // Content Styles
     content: {
         flex: 1,
-        padding: 14,
+        paddingTop: 20,
+        paddingHorizontal: 20,
+        backgroundColor: '#D0F3DA',
     },
-    header: {
+    contentHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 24,
     },
-    headerTitle: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    headerInfo: {
+        flex: 1,
     },
-    headerEmojiCircle: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#22C55E',
+    categoryTitle: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#1E293B',
+        marginBottom: 4,
+        letterSpacing: -0.5,
+    },
+    itemCount: {
+        fontSize: 14,
+        color: '#64748B',
+        fontWeight: '500',
+    },
+    categoryIconBadge: {
+        marginLeft: 16,
+    },
+    categoryIconBadgeCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#D2691E', // Brown theme
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 8,
+        shadowColor: '#D2691E',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
+        elevation: 6,
     },
-    headerEmoji: {
-        color: '#fff',
-        fontSize: 14,
+
+    // Search Styles
+    searchContainer: {
+        marginBottom: 24,
     },
-    headerText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#1F2937',
+    searchInputWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F8FAFC',
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 4,
+        borderWidth: 1.5,
+        borderColor: '#E2E8F0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    searchIcon: {
+        marginRight: 12,
     },
     searchInput: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
+        flex: 1,
+        fontSize: 16,
+        color: '#1E293B',
+        paddingVertical: 12,
+        fontWeight: '500',
     },
+    clearButton: {
+        padding: 4,
+        marginLeft: 8,
+    },
+
+    // Items List Styles
     itemsList: {
         paddingBottom: 100,
     },
-    iconWrapper: {
+    cardContainer: {
+        marginBottom: 16,
+    },
+    itemCard: {
+        borderRadius: 16,
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+
+    // Empty State
+    emptyState: {
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 14,
+        paddingVertical: 60,
+        paddingHorizontal: 40,
     },
-    categoryIconStyle: {
-        transform: [{ rotate: '-90deg' }],
+    emptyTitle: {
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#475569',
+        marginTop: 16,
+        marginBottom: 8,
     },
-    iconText: {
-        marginTop: 6,
-        fontSize: 10,
-        color: '#fff',
-        transform: [{ rotate: '-90deg' }],
+    emptySubtitle: {
+        fontSize: 14,
+        color: '#94A3B8',
         textAlign: 'center',
-        width: 60,
-    },
-    activeIconText: {
-        color: '#D2691E',
+        lineHeight: 20,
     },
 });

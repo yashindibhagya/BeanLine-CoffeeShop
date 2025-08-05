@@ -93,8 +93,8 @@ const CoffeeCupSelector = () => {
 
   // Initialize rotation to M position
   useEffect(() => {
-    rotationValue.setValue(0);
-    currentRotation.current = 0;
+    rotationValue.setValue(95); // Set to M position initially
+    currentRotation.current = 95;
     setSelectedSize('M');
   }, []);
 
@@ -148,6 +148,33 @@ const CoffeeCupSelector = () => {
     return from + diff;
   };
 
+  // NEW: Handle size label tap
+  const handleSizeLabelPress = (size) => {
+    // Prevent interaction if already rotating
+    if (isRotating) return;
+
+    setIsRotating(true);
+    setSelectedSize(size.label);
+
+    // Calculate the shortest path to the target angle
+    const targetAngle = getShortestRotation(currentRotation.current, size.angle);
+
+    // Update current rotation reference to the final target
+    currentRotation.current = size.angle;
+
+    // Animate directly to the calculated shortest path
+    Animated.timing(rotationValue, {
+      toValue: targetAngle,
+      duration: 600, // Smooth duration
+      useNativeDriver: true,
+    }).start(() => {
+      // Ensure the final value is set correctly
+      rotationValue.setValue(size.angle);
+      currentRotation.current = size.angle;
+      setIsRotating(false);
+    });
+  };
+
   // Add to cart function like in the first code
   const handleAddToCart = () => {
     if (!item) return;
@@ -195,8 +222,12 @@ const CoffeeCupSelector = () => {
 
       const newRotation = currentRotation.current + angleDiff;
 
-      // Update the animated value
-      rotationValue.setValue(newRotation);
+      // Smooth the rotation update with slight damping
+      Animated.timing(rotationValue, {
+        toValue: newRotation,
+        duration: 50, // Very short duration for real-time feel but with smoothing
+        useNativeDriver: true,
+      }).start();
 
       // Update selected size in real-time
       updateSelectedSize(newRotation);
@@ -215,17 +246,16 @@ const CoffeeCupSelector = () => {
       // Update current rotation reference
       currentRotation.current = targetSize.angle;
 
-      // Animate to the target position
-      Animated.spring(rotationValue, {
+      // Smooth snap animation with better parameters
+      Animated.timing(rotationValue, {
         toValue: targetSize.angle,
+        duration: 400, // Smooth timing animation
         useNativeDriver: true,
-        tension: 100,
-        friction: 8,
       }).start(() => {
         // Ensure final state is correct
         setSelectedSize(targetSize.label);
         currentRotation.current = targetSize.angle;
-        setIsRotating(false); // Lock rotation after setting size
+        setIsRotating(false);
       });
     },
   });
@@ -301,15 +331,15 @@ const CoffeeCupSelector = () => {
           <Ionicons name="arrow-back-circle-sharp" size={34} color="white" />
         </TouchableOpacity>
 
-        {/* Size labels */}
+        {/* Size labels - NOW TOUCHABLE */}
         {sizes.map((size) => (
-          <Animated.View
+          <TouchableOpacity
             key={size.label}
             style={[
               styles.sizeLabel,
               {
                 left: width / 2 + size.position.x - 15,
-                top: height / 2 - 200 + size.position.y - 15,
+                top: height / 2 - 170 + size.position.y - 15,
                 transform: [
                   {
                     scale: selectedSize === size.label ? 1.1 : 1.0
@@ -318,6 +348,9 @@ const CoffeeCupSelector = () => {
               },
               selectedSize === size.label && styles.selectedLabel,
             ]}
+            onPress={() => handleSizeLabelPress(size)}
+            disabled={isRotating} // Disable when rotating
+            activeOpacity={0.7}
           >
             <Text
               style={[
@@ -327,7 +360,7 @@ const CoffeeCupSelector = () => {
             >
               {size.label}
             </Text>
-          </Animated.View>
+          </TouchableOpacity>
         ))}
 
         {/* Rotatable coffee cup */}
@@ -336,14 +369,22 @@ const CoffeeCupSelector = () => {
             styles.cupContainer,
             {
               transform: [{ rotate: rotation }],
-              opacity: isRotating ? 0.8 : 1.0, // Visual feedback when rotating
+              opacity: isRotating ? 0.9 : 1.0, // Slight transparency when rotating
+              alignItems: 'center',
+              justifyContent: 'center',
             },
           ]}
           {...panResponder.panHandlers}
         >
           <Animated.Image
             source={item.imageTop}
-            style={{ width: 250, height: 250, resizeMode: 'contain', left: 10, bottom: 20 }}
+            style={{
+              width: 250,
+              height: 250,
+              resizeMode: 'contain',
+              bottom: 20,
+              alignSelf: 'center',
+            }}
           />
         </Animated.View>
       </View>
