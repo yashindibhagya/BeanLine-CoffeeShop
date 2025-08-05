@@ -366,9 +366,10 @@ const CoffeeCupSelector = () => {
               </View>
               <Text style={styles.productTitle}>{item.name}</Text>
             </View>
-            <View style={styles.ratingContainer}>
-              <Text style={styles.priceText}>$ {item.price}</Text>
-            </View>
+          </View>
+
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceText}>$ {item.price}</Text>
           </View>
 
           {/* About Section */}
@@ -430,7 +431,7 @@ const CoffeeCupSelector = () => {
           {/* Related Items Section */}
           {item && item.category && (
             <View style={{ marginTop: 24 }}>
-              <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>
+              <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', top: -40 }}>
                 Other items in this category
               </Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -615,6 +616,10 @@ const styles = StyleSheet.create({
   ratingContainer: {
     alignItems: 'flex-start',
   },
+  priceContainer: {
+    alignItems: 'flex-end',
+    top: -60,
+  },
   ratingBadge: {
     backgroundColor: '#D2691E',
     paddingHorizontal: 12,
@@ -634,6 +639,7 @@ const styles = StyleSheet.create({
   },
   aboutSection: {
     marginBottom: 24,
+    top: -40
   },
   aboutTitle: {
     fontSize: 18,
@@ -649,6 +655,7 @@ const styles = StyleSheet.create({
   },
   sugarSection: {
     marginBottom: 24,
+    top: -40
   },
   sugarTitle: {
     fontSize: 16,
@@ -688,6 +695,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    top: -40
   },
   volumeSection: {
     flex: 1,

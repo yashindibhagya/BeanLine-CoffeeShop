@@ -135,7 +135,7 @@ const ItemCard = ({ item, onPress, onFavoritePress }) => {
                         <Icon
                             name={showPopup === 'Added to cart!' ? "check-circle" : "remove-circle"}
                             size={20}
-                            color={showPopup === 'Added to cart!' ? "#4CAF50" : "#FF5722"}
+                            color={showPopup === 'Added to cart!' ? "#FFD700" : "#FF5722"}
                         />
                         <Text style={styles.popupText}>{showPopup}</Text>
                     </View>
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#4CAF50',
+        borderColor: '#FFD700',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
