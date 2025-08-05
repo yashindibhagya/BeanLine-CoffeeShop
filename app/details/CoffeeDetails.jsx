@@ -1,4 +1,3 @@
-import CappuccinoImage from '@/assets/images/Untitled-1.png';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -16,6 +15,8 @@ const { width, height } = Dimensions.get('window');
 
 // Import navigation and cart context like in the first code
 import { getAllItemsFlat } from '@/assets/Data/items/items';
+import MiniItemCard from '@/components/ItemCard/MiniItemCard';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
@@ -286,6 +287,20 @@ const CoffeeCupSelector = () => {
           <View style={styles.brownOverlay} />
         </View>
 
+        {/* Back Button */}
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: 38,
+            left: 20,
+            zIndex: 10,
+            padding: 8,
+          }}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back-circle-sharp" size={34} color="white" />
+        </TouchableOpacity>
+
         {/* Size labels */}
         {sizes.map((size) => (
           <Animated.View
@@ -327,7 +342,7 @@ const CoffeeCupSelector = () => {
           {...panResponder.panHandlers}
         >
           <Animated.Image
-            source={CappuccinoImage}
+            source={item.imageTop}
             style={{ width: 250, height: 250, resizeMode: 'contain', left: 10, bottom: 20 }}
           />
         </Animated.View>
@@ -335,7 +350,7 @@ const CoffeeCupSelector = () => {
 
       {/* SECTION 2: Scrollable Middle Description Section with Gradient */}
       <LinearGradient
-        colors={['#484848', '#171717']} // Dark gradient
+        colors={['#000000', '#000000']} // Dark gradient
         style={styles.detailsSection}
       >
         <ScrollView
@@ -411,12 +426,35 @@ const CoffeeCupSelector = () => {
               </TouchableOpacity>
             </View>
           </View>
+
+          {/* Related Items Section */}
+          {item && item.category && (
+            <View style={{ marginTop: 24 }}>
+              <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>
+                Other items in this category
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {getAllItemsFlat()
+                  .filter(i => i.category === item.category && i.id !== item.id)
+                  .map(related => (
+                    <MiniItemCard
+                      key={related.id}
+                      item={related}
+                      onPress={() => {
+                        router.push({ pathname: '/details/CoffeeDetails', params: { coffee: related.id } });
+
+                      }}
+                    />
+                  ))}
+              </ScrollView>
+            </View>
+          )}
         </ScrollView>
       </LinearGradient>
 
       {/* SECTION 3: Fixed Bottom Button with Gradient */}
       <LinearGradient
-        colors={['#171717', '#484848']} // Same gradient as description section
+        colors={['#000000', '#000000']} // Same gradient as description section
         style={styles.fixedButtonContainer}
       >
         <TouchableOpacity style={styles.buyButton} onPress={handleAddToCart}>
@@ -552,6 +590,7 @@ const styles = StyleSheet.create({
     flex: 1, // Takes remaining space between upper and button
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    paddingTop: 5
   },
   scrollableContent: {
     flex: 1,

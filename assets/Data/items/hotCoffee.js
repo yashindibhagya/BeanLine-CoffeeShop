@@ -10,7 +10,8 @@ export const hotCoffeeItems = [
     preparationTime: "2-3 mins",
     ingredients: ["Premium Coffee Beans", "Hot Water"],
     size: ["Single Shot", "Double Shot"],
-    calories: 5
+    calories: 5,
+    imageTop: require('../../../assets/images/topView/espresso.png'),
   },
   {
     id: "hc2",
@@ -23,7 +24,8 @@ export const hotCoffeeItems = [
     preparationTime: "4-5 mins",
     ingredients: ["Espresso", "Steamed Milk", "Milk Foam"],
     size: ["Small", "Medium", "Large"],
-    calories: 120
+    calories: 120,
+    imageTop: require('../../../assets/images/Untitled-1.png'),
   },
   {
     id: "hc3",
@@ -36,7 +38,8 @@ export const hotCoffeeItems = [
     preparationTime: "4-5 mins",
     ingredients: ["Espresso", "Steamed Milk", "Light Foam"],
     size: ["Small", "Medium", "Large"],
-    calories: 150
+    calories: 150,
+    imageTop: require('../../../assets/images/topView/latte.png'),
   },
   {
     id: "hc4",
@@ -49,6 +52,7 @@ export const hotCoffeeItems = [
     preparationTime: "3-4 mins",
     ingredients: ["Espresso", "Hot Water"],
     size: ["Small", "Medium", "Large"],
-    calories: 10
+    calories: 10,
+    imageTop: require('../../../assets/images/Untitled-1.png'),
   },
 ];

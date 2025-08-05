@@ -10,12 +10,13 @@ import {
   View
 } from 'react-native';
 
-import ItemCard from '@/components/ItemCard/ItemCard';
+import MiniItemCard from '@/components/ItemCard/MiniItemCard';
 
 const { width, height } = Dimensions.get('window'); // Fixed: Added height
 
 // Import navigation and cart context like in the first code
 import { getAllItemsFlat } from '@/assets/Data/items/items';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 
@@ -121,6 +122,21 @@ const FoodDetails = () => {
           <View style={styles.brownOverlay} />
         </View>
 
+        {/* Back Button */}
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            top: 38,
+            left: 20,
+            zIndex: 10,
+
+            padding: 8,
+          }}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back-circle-sharp" size={34} color="white" />
+        </TouchableOpacity>
+
         {/* Upper Black Area Image */}
         <View style={styles.upperImageArea}>
           {item && item.image && (
@@ -135,7 +151,7 @@ const FoodDetails = () => {
 
       {/* SECTION 2: Scrollable Middle Description Section with Gradient */}
       <LinearGradient
-        colors={['#484848', '#171717']} // Dark gradient
+        colors={['#000', '#000']} // Dark gradient
         style={styles.detailsSection}
       >
         <ScrollView
@@ -195,9 +211,14 @@ const FoodDetails = () => {
                 {getAllItemsFlat()
                   .filter(i => i.category === item.category && i.id !== item.id)
                   .map(related => (
-                    <View key={related.id} style={{ marginRight: 16 }}>
-                      <ItemCard item={related} />
-                    </View>
+                    <MiniItemCard
+                      key={related.id}
+                      item={related}
+                      onPress={() => {
+                        router.push({ pathname: '/details/FoodDetails', params: { food: related.id } });
+
+                      }}
+                    />
                   ))}
               </ScrollView>
             </View>
@@ -207,7 +228,7 @@ const FoodDetails = () => {
 
       {/* SECTION 3: Fixed Bottom Button with Gradient */}
       <LinearGradient
-        colors={['#171717', '#484848']} // Same gradient as description section
+        colors={['#000', '#000']} // Same gradient as description section
         style={styles.fixedButtonContainer}
       >
         <TouchableOpacity style={styles.buyButton} onPress={handleAddToCart}>
@@ -353,15 +374,14 @@ const styles = StyleSheet.create({
   // SECTION 2: Scrollable Middle Description Section with Gradient
   detailsSection: {
     flex: 1, // Takes remaining space between upper and button
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    top: -40
   },
   scrollableContent: {
     flex: 1,
   },
   scrollContentContainer: {
     paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingTop: 4, // Reduced since we now have padding on the container
     paddingBottom: 20, // Extra padding at bottom for better scroll experience
   },
   headerRow: {
