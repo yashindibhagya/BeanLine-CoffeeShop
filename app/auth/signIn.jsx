@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     signUpLink: {
-        color: "#934B1F",
+        color: "#D2691E",
         fontWeight: "bold",
         marginLeft: 5,
         fontSize: 15

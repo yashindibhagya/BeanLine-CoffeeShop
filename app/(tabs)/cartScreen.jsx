@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   quantityBtn: {
-    backgroundColor: '#934B1F',
+    backgroundColor: '#D2691E',
     width: 32,
     height: 32,
     borderRadius: 8,
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   payNowBtn: {
-    backgroundColor: '#934B1F',
+    backgroundColor: '#D2691E',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',

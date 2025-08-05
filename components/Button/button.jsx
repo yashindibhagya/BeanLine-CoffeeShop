@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
         width: '90%',
     },
     solid: {
-        backgroundColor: '#934B1F',
-        borderColor: '#934B1F',
+        backgroundColor: '#D2691E',
+        borderColor: '#D2691E',
     },
     outline: {
         backgroundColor: 'transparent',
-        borderColor: '#934B1F',
+        borderColor: '#D2691E',
     },
     text: {
         color: '#fff',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.5,
     },
     outlineText: {
-        color: '#934B1F',
+        color: '#D2691E',
     },
 });
 

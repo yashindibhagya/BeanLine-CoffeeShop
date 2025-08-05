@@ -86,7 +86,7 @@ export default function SidebarCategories() {
                                         name={cat.icon}
                                         size={24}
                                         style={styles.icon}
-                                        color={selectedCategory === cat.id ? '#8A4B23' : '#fff'}
+                                        color={selectedCategory === cat.id ? '#D2691E' : '#fff'}
                                     />
                                     <Text
                                         style={[
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     },
     sidebar: {
         width: 70,
-        backgroundColor: '#8A4B23', // Brown background
+        backgroundColor: '#D2691E', // Brown background
         alignItems: 'center',
         paddingVertical: 20,
         borderTopRightRadius: 20,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         borderWidth: 1,
         borderColor: '#fff',
-        backgroundColor: '#8A4B23',
+        backgroundColor: '#D2691E',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 16,
@@ -240,6 +240,6 @@ const styles = StyleSheet.create({
         width: 60,
     },
     activeIconText: {
-        color: '#8A4B23',
+        color: '#D2691E',
     },
 });

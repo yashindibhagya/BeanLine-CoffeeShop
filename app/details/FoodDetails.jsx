@@ -1,10 +1,8 @@
-import CappuccinoImage from '@/assets/images/Untitled-1.png';
-import React, { useEffect, useRef, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient'; // Add this import
+import React, { useEffect, useState } from 'react';
 import {
-  Animated,
   Dimensions,
   Image,
-  PanResponder,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,11 +10,10 @@ import {
   View
 } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window'); // Fixed: Added height
 
 // Import navigation and cart context like in the first code
 import { getAllItemsFlat } from '@/assets/Data/items/items';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCart } from '../context/CartContext';
 
@@ -25,32 +22,17 @@ const FoodDetails = () => {
   const router = useRouter();
   const { addToCart } = useCart();
 
-  const [selectedSize, setSelectedSize] = useState('M');
-  const [isRotating, setIsRotating] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const rotationValue = useRef(new Animated.Value(0)).current;
-  const currentRotation = useRef(0);
-  const startAngle = useRef(0);
+  const incrementQuantity = () => setQuantity(prev => prev + 1);
+  const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
-  // Size options with their angles (in degrees) and volumes
-  const sizes = [
-    { label: 'S', angle: 125, position: { x: -80, y: 60 }, volume: '120ml', name: 'Small' },
-    { label: 'M', angle: 95, position: { x: 0, y: 80 }, volume: '160ml', name: 'Medium' },
-    { label: 'L', angle: 65, position: { x: 80, y: 60 }, volume: '200ml', name: 'Large' },
-  ];
-
-  // Sugar levels from the first code
-  const sugarLevels = ['No Sugar', 'Less Sugar', 'Normal', 'Extra Sugar'];
-  const [selectedSugar, setSelectedSugar] = useState(sugarLevels[2]);
-
-  // Item loading logic from the first code
   useEffect(() => {
     // console.log('=== DEBUG INFO ===');
-    // console.log('Received coffee param:', coffee);
-    // console.log('Coffee param type:', typeof coffee);
+    // console.log('Received food param:', food);
+    // console.log('Food param type:', typeof food);
 
     // Get all items for debugging
     const allItems = getAllItemsFlat();
@@ -67,7 +49,7 @@ const FoodDetails = () => {
     if (!foundItem) {
       // Approach 2: Parse as integer
       const foodId = parseInt(food, 10);
-      console.log('Parsed coffee ID:', coffeeId);
+      console.log('Parsed food ID:', foodId); // Fixed: Changed coffeeId to foodId
       foundItem = allItems.find(i => i.id === foodId);
       console.log('Found with integer comparison:', foundItem ? foundItem.name : 'Not found');
     }
@@ -75,7 +57,7 @@ const FoodDetails = () => {
     if (!foundItem) {
       // Approach 3: Convert both to strings
       foundItem = allItems.find(i => String(i.id) === String(food));
-      console.log('Found with string conversion:', foundItem ? foundItem.name : 'Not found');
+      // console.log('Found with string conversion:', foundItem ? foundItem.name : 'Not found');
     }
 
     if (!foundItem) {
@@ -85,170 +67,21 @@ const FoodDetails = () => {
       console.log('Found with number conversion:', foundItem ? foundItem.name : 'Not found');
     }
 
-
     setItem(foundItem);
     setLoading(false);
   }, [food]);
 
-  // Initialize rotation to M position
-  useEffect(() => {
-    rotationValue.setValue(0);
-    currentRotation.current = 0;
-    setSelectedSize('M');
-  }, []);
-
-  // Calculate angle from center point
-  const calculateAngle = (x, y, centerX, centerY) => {
-    const deltaX = x - centerX;
-    const deltaY = y - centerY;
-
-    if (isNaN(deltaX) || isNaN(deltaY)) return 0;
-
-    let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
-    return angle;
-  };
-
-  // Normalize angle to -180 to 180 range
-  const normalizeAngle = (angle) => {
-    while (angle > 180) angle -= 360;
-    while (angle < -180) angle += 360;
-    return angle;
-  };
-
-  // Find closest size based on rotation
-  const getClosestSize = (rotation) => {
-    const normalizedRotation = normalizeAngle(rotation);
-
-    let closestSize = sizes[1]; // Default to M
-    let minDiff = Math.abs(normalizedRotation - sizes[1].angle);
-
-    sizes.forEach(size => {
-      const diff = Math.abs(normalizedRotation - size.angle);
-      if (diff < minDiff) {
-        minDiff = diff;
-        closestSize = size;
-      }
-    });
-
-    return closestSize;
-  };
-
-  // Update selected size based on current rotation
-  const updateSelectedSize = (rotation) => {
-    const closestSize = getClosestSize(rotation);
-    setSelectedSize(closestSize.label);
-  };
-
-  // Calculate the shortest rotation path
-  const getShortestRotation = (from, to) => {
-    let diff = to - from;
-    while (diff > 180) diff -= 360;
-    while (diff < -180) diff += 360;
-    return from + diff;
-  };
-
-  // Add to cart function like in the first code
+  // Add to cart function
   const handleAddToCart = () => {
     if (!item) return;
-
-    const currentSize = getCurrentSize();
     addToCart({
       ...item,
-      selectedSize: currentSize.name, // Convert to full name like first code
-      selectedSugar,
       quantity,
     });
     router.push('/cartScreen'); // Navigate to cart
   };
 
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: () => !isRotating,
-    onMoveShouldSetPanResponderCapture: () => !isRotating,
-    onPanResponderGrant: (evt) => {
-      if (isRotating) return;
-
-      setIsRotating(true);
-      const centerX = width / 2;
-      const centerY = height / 2 - 100;
-      const touchX = evt.nativeEvent.pageX;
-      const touchY = evt.nativeEvent.pageY;
-
-      startAngle.current = calculateAngle(touchX, touchY, centerX, centerY);
-    },
-    onPanResponderMove: (evt, gestureState) => {
-      if (!isRotating) return;
-
-      const centerX = width / 2;
-      const centerY = height / 2 - 100;
-      const touchX = evt.nativeEvent.pageX;
-      const touchY = evt.nativeEvent.pageY;
-
-      if (isNaN(touchX) || isNaN(touchY)) return;
-
-      const currentAngle = calculateAngle(touchX, touchY, centerX, centerY);
-      let angleDiff = currentAngle - startAngle.current;
-
-      // Handle angle wrapping
-      if (angleDiff > 180) angleDiff -= 360;
-      if (angleDiff < -180) angleDiff += 360;
-
-      const newRotation = currentRotation.current + angleDiff;
-
-      // Update the animated value
-      rotationValue.setValue(newRotation);
-
-      // Update selected size in real-time
-      updateSelectedSize(newRotation);
-
-      // Update start angle for next move
-      startAngle.current = currentAngle;
-      currentRotation.current = newRotation;
-    },
-    onPanResponderRelease: (evt, gestureState) => {
-      if (!isRotating) return;
-
-      // Find the target size to snap to
-      const targetSize = getClosestSize(currentRotation.current);
-      const targetAngle = getShortestRotation(currentRotation.current, targetSize.angle);
-
-      // Update current rotation reference
-      currentRotation.current = targetSize.angle;
-
-      // Animate to the target position
-      Animated.spring(rotationValue, {
-        toValue: targetSize.angle,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }).start(() => {
-        // Ensure final state is correct
-        setSelectedSize(targetSize.label);
-        currentRotation.current = targetSize.angle;
-        setIsRotating(false); // Lock rotation after setting size
-      });
-    },
-  });
-
-  const rotation = rotationValue.interpolate({
-    inputRange: [-360, 360],
-    outputRange: ['-360deg', '360deg'],
-    extrapolate: 'extend',
-  });
-
-  // Get current size details
-  const getCurrentSize = () => {
-    return sizes.find(size => size.label === selectedSize) || sizes[1];
-  };
-
-  const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
-  };
-
-  const decrementQuantity = () => {
-    setQuantity(prev => Math.max(1, prev - 1));
-  };
-
-  // Loading and error states like in the first code
+  // Loading and error states
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -262,7 +95,7 @@ const FoodDetails = () => {
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Item not found</Text>
         <Text style={styles.errorSubText}>
-          Looking for item with ID: {coffee} (type: {typeof coffee})
+          Looking for item with ID: {food} (type: {typeof food}) {/* Fixed: Changed coffee to food */}
         </Text>
         <TouchableOpacity
           style={styles.backButton}
@@ -286,51 +119,16 @@ const FoodDetails = () => {
           <View style={styles.brownOverlay} />
         </View>
 
-        {/* Size labels */}
-        {sizes.map((size) => (
-          <Animated.View
-            key={size.label}
-            style={[
-              styles.sizeLabel,
-              {
-                left: width / 2 + size.position.x - 15,
-                top: height / 2 - 200 + size.position.y - 15,
-                transform: [
-                  {
-                    scale: selectedSize === size.label ? 1.1 : 1.0
-                  }
-                ]
-              },
-              selectedSize === size.label && styles.selectedLabel,
-            ]}
-          >
-            <Text
-              style={[
-                styles.sizeLabelText,
-                selectedSize === size.label && styles.selectedLabelText,
-              ]}
-            >
-              {size.label}
-            </Text>
-          </Animated.View>
-        ))}
-
-        {/* Rotatable coffee cup */}
-        <Animated.View
-          style={[
-            styles.cupContainer,
-            {
-              transform: [{ rotate: rotation }],
-              opacity: isRotating ? 0.8 : 1.0, // Visual feedback when rotating
-            },
-          ]}
-          {...panResponder.panHandlers}
-        >
-          <Animated.Image
-            source={CappuccinoImage}
-            style={{ width: 250, height: 250, resizeMode: 'contain', left: 10, bottom: 20 }}
-          />
-        </Animated.View>
+        {/* Upper Black Area Image */}
+        <View style={styles.upperImageArea}>
+          {item && item.image && (
+            <Image
+              source={item.image}
+              style={styles.upperImage}
+              resizeMode="cover"
+            />
+          )}
+        </View>
       </View>
 
       {/* SECTION 2: Scrollable Middle Description Section with Gradient */}
@@ -364,37 +162,8 @@ const FoodDetails = () => {
             </Text>
           </View>
 
-          {/* Sugar Level Section */}
-          <View style={styles.sugarSection}>
-            <Text style={styles.sugarTitle}>Sugar Level</Text>
-            <View style={styles.sugarRow}>
-              {sugarLevels.map(level => (
-                <TouchableOpacity
-                  key={level}
-                  style={[
-                    styles.sugarButton,
-                    selectedSugar === level && styles.selectedSugar
-                  ]}
-                  onPress={() => setSelectedSugar(level)}
-                >
-                  <Text style={[
-                    styles.sugarText,
-                    selectedSugar === level && styles.selectedSugarText
-                  ]}>
-                    {level.split(' ')[0]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
           {/* Volume and Quantity */}
           <View style={styles.volumeQuantityRow}>
-            <View style={styles.volumeSection}>
-              <Text style={styles.volumeLabel}>Volume</Text>
-              <Text style={styles.volumeValue}>{getCurrentSize().volume}</Text>
-            </View>
-
             <View style={styles.quantitySection}>
               <TouchableOpacity
                 style={styles.quantityButton}
@@ -506,6 +275,18 @@ const styles = StyleSheet.create({
     opacity: 0.7, // Adjust opacity to control brown tint intensity
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
+  },
+  upperImageArea: {
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10, // Ensure image is above background
+  },
+  upperImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
   },
   cupContainer: {
     width: 10,

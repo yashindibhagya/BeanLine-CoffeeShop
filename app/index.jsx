@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
         marginTop: 320
     },
     coffeeText: {
-        color: "#934B1F",
+        color: "#D2691E",
     },
     buttonsContainer: {
         width: '100%',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     getStartedButton: {
-        backgroundColor: '#934B1F',
+        backgroundColor: '#D2691E',
         paddingHorizontal: 40,
         paddingVertical: 16,
         borderRadius: 25,

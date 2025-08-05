@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#934B1F', // black background inside
+    backgroundColor: '#D2691E', // black background inside
     //borderColor: '#fff',     // white border
     borderWidth: 1,
     borderRadius: 50,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   selectedCategoryItem: {
-    backgroundColor: '#934B1F',
+    backgroundColor: '#D2691E',
   },
   categoryVew: {
     flexDirection: 'row',

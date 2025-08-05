@@ -23,7 +23,7 @@ const OfferScreen = () => {
                     </Text>
 
                     <Text style={styles.up}>
-                        Up to <Text style={{ color: '#934B1F', fontSize: 26, fontWeight: 900 }}>20%</Text>
+                        Up to <Text style={{ color: '#D2691E', fontSize: 26, fontWeight: 900 }}>20%</Text>
                     </Text>
 
                     <TouchableOpacity style={styles.button}>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     },
     button: {
         borderRadius: 20,
-        backgroundColor: '#934B1F',
+        backgroundColor: '#D2691E',
         width: 90,
         height: 30,
         justifyContent: 'center',
