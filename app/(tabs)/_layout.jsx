@@ -6,7 +6,8 @@ import React from 'react';
 import {
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 import Animated, {
@@ -21,15 +22,12 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         presentation: 'transparentModal',
-
         tabBarStyle: {
           position: 'absolute',
-          height: 80,
           borderRadius: 40,
           marginHorizontal: 20,
           marginBottom: 20,
           backgroundColor: '#fff',
-          borderTopWidth: 0,
           elevation: 10,
           justifyContent: 'center',
         },
@@ -41,32 +39,32 @@ export default function TabLayout() {
       <Tabs.Screen
         name="homeScreen"
         options={{
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={24} name="house.fill" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <IconSymbol size={24} name="house.fill" color={focused ? '#D2691E' : '#000'} />
           ),
         }}
       />
       <Tabs.Screen
         name="searchScreen"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons size={24} name="fast-food-sharp" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <Ionicons size={24} name="fast-food-sharp" color={focused ? '#D2691E' : '#000'} />
           ),
         }}
       />
       <Tabs.Screen
         name="cartScreen"
         options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="delivery-dining" size={28} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons name="delivery-dining" size={28} color={focused ? '#D2691E' : '#000'} />
           ),
         }}
       />
       <Tabs.Screen
         name="profileScreen"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={24} color={color} />
+          tabBarIcon: ({ focused }) => (
+            <Ionicons name="person" size={24} color={focused ? '#D2691E' : '#000'} />
           ),
         }}
       />
@@ -79,14 +77,8 @@ function CustomTabBarButton({ children, onPress, accessibilityState, routeName }
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      flexDirection: 'row',
-      alignItems: 'center',
-      width: withTiming(focused ? 120 : 56, { duration: 200 }),
-      backgroundColor: withTiming(focused ? '#8BC34A' : 'transparent', { duration: 200 }),
-      borderRadius: 28,
-      paddingHorizontal: withTiming(focused ? 16 : 0, { duration: 200 }),
-      paddingVertical: 0,
-      justifyContent: 'center',
+      width: withTiming(focused ? 120 : '100%', { duration: 200 }),
+      backgroundColor: withTiming(focused ? '#FF6D00' : 'transparent', { duration: 200 }),
     };
   }, [focused]);
 
@@ -96,15 +88,15 @@ function CustomTabBarButton({ children, onPress, accessibilityState, routeName }
       activeOpacity={0.9}
       style={styles.tabWrapper}
     >
-      <Animated.View style={[focused ? styles.activeTabPill : styles.tabContainer, animatedStyle]}>
-        <Animated.View style={focused ? styles.activeIconInPill : styles.iconWrapper}>
-          {focused
-            ? React.isValidElement(children) && children.type !== React.Fragment
-              ? React.cloneElement(children, { color: '#fff' })
-              : children
-            : children}
-        </Animated.View>
-        {focused && <Text style={styles.tabLabel}>{getLabel(routeName)}</Text>}
+      <Animated.View style={[styles.tabContainer, animatedStyle]}>
+        <View style={styles.iconContainer}>
+          <View style={focused ? styles.activeIconWrapper : styles.iconWrapper}>
+            {children}
+          </View>
+          {focused && (
+            <Text style={styles.tabLabel}>{getLabel(routeName)}</Text>
+          )}
+        </View>
       </Animated.View>
     </TouchableOpacity>
   );
@@ -114,9 +106,9 @@ function getLabel(routeName) {
   switch (routeName) {
     case 'homeScreen':
       return 'Home';
-    case 'cartScreen':
+    case 'searchScreen':
       return 'Explore';
-    case 'favoriteScreen':
+    case 'cartScreen':
       return 'Orders';
     case 'profileScreen':
       return 'Profile';
@@ -130,6 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    top: 8,
   },
   tabContainer: {
     height: 56,
@@ -137,61 +130,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    backgroundColor: 'transparent',
+    paddingHorizontal: 10,
   },
-  activeTabPill: {
+  iconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#8BC34A',
-    borderRadius: 32,
-    paddingHorizontal: 24,
-    paddingVertical: 6,
-    minWidth: 120,
-    height: 56,
     justifyContent: 'center',
-    shadowColor: '#8BC34A',
-    shadowOpacity: 0.12,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-  },
-  activeIconInPill: {
-    backgroundColor: 'transparent',
-    borderRadius: 20,
-    padding: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
+    height: 40,
   },
   iconWrapper: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 8,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowOffset: { width: 0, height: 1 },
+    elevation: 3,
+    shadowColor: '#D2691E',
+    shadowOpacity: 0.8,
+    shadowOffset: { width: 0, height: 3 },
     shadowRadius: 2,
   },
   activeIconWrapper: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 8,
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
     elevation: 3,
-    shadowColor: '#8BC34A',
-    shadowOpacity: 0.15,
+    shadowColor: '#FF6D00',
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },
   tabLabel: {
-    marginLeft: 6,
     fontWeight: '600',
     color: '#fff',
     fontSize: 16,
+    marginLeft: 4,
   },
 });

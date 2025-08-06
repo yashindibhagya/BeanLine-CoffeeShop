@@ -22,25 +22,6 @@ const { width, height } = Dimensions.get('window');
 const SIDEBAR_WIDTH = 85;
 
 export default function ModernSidebarCategories() {
-    // New state for Coffee/Food tab
-    const [selectedTab, setSelectedTab] = useState('coffee');
-
-    // Helper: coffee and food category IDs (update as needed)
-    const coffeeCategoryIds = ['1', '2', '3'];
-    const isCoffeeCategory = (cat) => coffeeCategoryIds.includes(String(cat.id));
-    const foodCategoryIds = categories.map(cat => cat.id).filter(id => !coffeeCategoryIds.includes(id));
-
-    // Filtered categories for sidebar
-    const filteredCategories = selectedTab === 'coffee'
-        ? categories.filter(isCoffeeCategory)
-        : categories.filter(cat => !isCoffeeCategory(cat));
-
-    // When switching tab, reset selectedCategory to first of filtered
-    React.useEffect(() => {
-        if (filteredCategories.length > 0) {
-            setSelectedCategory(filteredCategories[0].id);
-        }
-    }, [selectedTab]);
     const [selectedCategory, setSelectedCategory] = useState('1');
     const [searchQuery, setSearchQuery] = useState('');
     const [animatedValue] = useState(new Animated.Value(0));
@@ -79,14 +60,9 @@ export default function ModernSidebarCategories() {
         });
     };
 
-    // Filter items based on selectedTab (coffee or food)
-    let allItems = searchQuery
+    const items = searchQuery
         ? searchItems(searchQuery, selectedCategory)
         : getItemsByCategory(selectedCategory);
-    
-    // You may need to adjust this filter logic based on your data structure
-    const isCoffee = (item) => coffeeCategoryIds.includes(String(item.categoryId || item.category));
-    const items = selectedTab === 'coffee' ? allItems.filter(isCoffee) : allItems.filter(item => !isCoffee(item));
 
     const selectedCategoryData = categories.find((cat) => cat.id === selectedCategory);
 
@@ -95,6 +71,11 @@ export default function ModernSidebarCategories() {
         const scale = animatedValue.interpolate({
             inputRange: [0, 1],
             outputRange: [1, isActive ? 1.1 : 1],
+        });
+
+        const rotate = animatedValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', isActive ? '360deg' : '0deg'],
         });
 
         return (
@@ -107,28 +88,27 @@ export default function ModernSidebarCategories() {
                     ]}
                     activeOpacity={0.7}
                 >
-                    {isActive && (
-                        <View style={styles.activeBackground} />
-                    )}
+                    {isActive && <View style={styles.activeBackground} />}
 
-                    <View style={styles.iconContainer}>
+                    <Animated.View style={[styles.iconContainer, { transform: [{ rotate }] }]}>
                         <MaterialIcons
                             name={item.icon}
                             size={26}
                             color={isActive ? '#D2691E' : '#FFFFFF'}
                             style={styles.categoryIconStyle}
                         />
-                    </View>
+                    </Animated.View>
 
-                    <Text
+                    <Animated.Text
                         style={[
                             styles.categoryText,
                             isActive && styles.activeCategoryText,
+                            { transform: [{ rotate }] },
                         ]}
                         numberOfLines={2}
                     >
                         {item.title}
-                    </Text>
+                    </Animated.Text>
 
                     {isActive && <View style={styles.activeIndicator} />}
                 </TouchableOpacity>
@@ -138,65 +118,9 @@ export default function ModernSidebarCategories() {
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            <StatusBar backgroundColor="#D0F3DA" barStyle="dark-content" />
-
-            {/* Top Coffee/Food Toggle Bar */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, marginHorizontal: 16 }}>
-                <TouchableOpacity
-                    onPress={() => setSelectedTab('coffee')}
-                    style={{
-                        backgroundColor: selectedTab === 'coffee' ? '#D2691E' : '#fff',
-                        borderRadius: 20,
-                        padding: 8,
-                        borderWidth: 1,
-                        borderColor: '#D2691E',
-                    }}
-                >
-                    <MaterialIcons name="local-cafe" size={22} color={selectedTab === 'coffee' ? '#fff' : '#D2691E'} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setSelectedTab('food')}
-                    style={{
-                        backgroundColor: selectedTab === 'food' ? '#D2691E' : '#fff',
-                        borderRadius: 20,
-                        padding: 8,
-                        borderWidth: 1,
-                        borderColor: '#D2691E',
-                    }}
-                >
-                    <MaterialIcons name="lunch-dining" size={22} color={selectedTab === 'food' ? '#fff' : '#D2691E'} />
-                </TouchableOpacity>
-            </View>
+            <StatusBar backgroundColor="#000" barStyle="light-content" />
 
             <View style={styles.container}>
-                {/* Top Coffee/Food Toggle */}
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginTop: 10, marginRight: 10 }}>
-                    <TouchableOpacity
-                        onPress={() => setSelectedTab('coffee')}
-                        style={{
-                            backgroundColor: selectedTab === 'coffee' ? '#D2691E' : '#fff',
-                            borderRadius: 20,
-                            padding: 8,
-                            marginRight: 8,
-                            borderWidth: 1,
-                            borderColor: '#D2691E',
-                        }}
-                    >
-                        <MaterialIcons name="local-cafe" size={22} color={selectedTab === 'coffee' ? '#fff' : '#D2691E'} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setSelectedTab('food')}
-                        style={{
-                            backgroundColor: selectedTab === 'food' ? '#D2691E' : '#fff',
-                            borderRadius: 20,
-                            padding: 8,
-                            borderWidth: 1,
-                            borderColor: '#D2691E',
-                        }}
-                    >
-                        <MaterialIcons name="lunch-dining" size={22} color={selectedTab === 'food' ? '#fff' : '#D2691E'} />
-                    </TouchableOpacity>
-                </View>
                 {/* Modern Sidebar with Brown Theme */}
                 <View style={styles.sidebar}>
                     <View style={styles.sidebarContent}>
@@ -211,7 +135,7 @@ export default function ModernSidebarCategories() {
 
                         {/* Categories List */}
                         <FlatList
-                            data={filteredCategories}
+                            data={categories}
                             keyExtractor={(item) => item.id}
                             renderItem={renderCategoryItem}
                             showsVerticalScrollIndicator={false}
@@ -325,12 +249,13 @@ export default function ModernSidebarCategories() {
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: "#D0F3DA",
+        backgroundColor: "#000",
     },
     container: {
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#000',
+        marginTop: 36
     },
 
     // Sidebar Styles - Updated to Brown Theme
@@ -463,7 +388,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 20,
         paddingHorizontal: 20,
-        backgroundColor: '#D0F3DA',
     },
     contentHeader: {
         flexDirection: 'row',
@@ -477,13 +401,13 @@ const styles = StyleSheet.create({
     categoryTitle: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#1E293B',
+        color: '#fff',
         marginBottom: 4,
         letterSpacing: -0.5,
     },
     itemCount: {
         fontSize: 14,
-        color: '#64748B',
+        color: '#fff',
         fontWeight: '500',
     },
     categoryIconBadge: {
