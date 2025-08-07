@@ -1,20 +1,23 @@
 import { Stack } from "expo-router";
 import { useState } from "react";
-import { CartProvider } from '../app/context/CartContext';
-import { UserDetailContext } from '../context/UserDetailContext';
+import { CartProvider } from '../app/context/CartContext.jsx';
+import { ThemeProvider } from '../contexts/ThemeContext.js';
+import { UserDetailContext } from '../context/UserDetailContext.jsx';
 
 export default function RootLayout() {
 
   const [userDetail, setUserDetail] = useState();
   return (
-    <CartProvider>
-      <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
-        <Stack screenOptions={{
-          headerShown: false
-        }}>
-        </Stack>
-      </UserDetailContext.Provider>
-    </CartProvider>
+    <ThemeProvider>
+      <CartProvider>
+        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+          <Stack screenOptions={{
+            headerShown: false
+          }}>
+          </Stack>
+        </UserDetailContext.Provider>
+      </CartProvider>
+    </ThemeProvider>
   )
 }
 
