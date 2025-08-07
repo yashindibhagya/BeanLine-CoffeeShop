@@ -17,8 +17,8 @@ const lightTheme = {
 };
 
 const darkTheme = {
-  background: '#121212',
-  surface: '#1E1E1E',
+  background: '#000000',
+  surface: '#121212',
   text: '#FFFFFF',
   textTertiary: '#AAAAAA',
   border: '#333333',

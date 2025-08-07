@@ -1,100 +1,196 @@
-import { Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, ScrollView, StatusBar, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
-import { ThemedButton, ThemedText, ThemedView } from '../../components/themed/ThemedComponents';
-import { useTheme } from '../../hooks/useTheme';
+import { Image, ScrollView, StatusBar, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+
+// Modern theme colors
+const theme = {
+    background: '#0A0A0B',
+    surface: '#1C1C1E',
+    surfaceElevated: '#2C2C2E',
+    primary: '#6366F1',
+    primaryLight: '#818CF8',
+    accent: '#F59E0B',
+    success: '#10B981',
+    error: '#EF4444',
+    text: '#FFFFFF',
+    textSecondary: '#A1A1AA',
+    textTertiary: '#71717A',
+    border: '#27272A',
+    cardBorder: '#374151',
+};
 
 const ProfileScreen = () => {
-    const { theme, isDark, toggleTheme } = useTheme();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [locationEnabled, setLocationEnabled] = useState(true);
+    const [darkMode, setDarkMode] = useState(true);
     const router = useRouter();
 
     // Mock user data
     const user = {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-        orders: 24,
-        points: 1240,
+        name: 'Alex Morgan',
+        email: 'alex.morgan@example.com',
+        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+        level: 'Gold Member',
     };
 
-    const menuItems = [
+    const menuSections = [
         {
-            icon: 'person-outline',
-            title: 'Personal Information',
-            onPress: () => console.log('Personal Info pressed')
+            title: 'ACCOUNT',
+            items: [
+                {
+                    icon: 'person-outline',
+                    title: 'Personal Information',
+                    subtitle: 'Manage your profile',
+                    color: theme.primary,
+                    onPress: () => console.log('Personal Info pressed')
+                },
+                {
+                    icon: 'security',
+                    title: 'Privacy & Security',
+                    subtitle: 'Control your data',
+                    color: theme.success,
+                    onPress: () => console.log('Security pressed')
+                },
+                {
+                    icon: 'palette',
+                    title: 'Appearance',
+                    subtitle: 'Theme preferences',
+                    color: theme.accent,
+                    rightComponent: (
+                        <Switch
+                            value={darkMode}
+                            onValueChange={setDarkMode}
+                            trackColor={{ false: '#374151', true: theme.primary }}
+                            thumbColor={darkMode ? '#fff' : '#9CA3AF'}
+                        />
+                    )
+                },
+            ]
         },
         {
-            icon: 'shopping-bag',
-            title: 'My Orders',
-            onPress: () => console.log('Orders pressed')
+            title: 'SERVICES',
+            items: [
+                {
+                    icon: 'favorite-border',
+                    title: 'Favorites',
+                    subtitle: 'Your saved items',
+                    color: theme.error,
+                    onPress: () => console.log('Favorites pressed')
+                },
+                {
+                    icon: 'location-on',
+                    title: 'Delivery Addresses',
+                    subtitle: '3 saved locations',
+                    color: theme.success,
+                    onPress: () => console.log('Addresses pressed')
+                },
+                {
+                    icon: 'credit-card',
+                    title: 'Payment Methods',
+                    subtitle: 'Cards & wallets',
+                    color: theme.accent,
+                    onPress: () => console.log('Payment pressed')
+                },
+            ]
         },
         {
-            icon: 'favorite-border',
-            title: 'Favorites',
-            onPress: () => console.log('Favorites pressed')
+            title: 'PREFERENCES',
+            items: [
+                {
+                    icon: 'notifications',
+                    title: 'Notifications',
+                    subtitle: 'Push & email alerts',
+                    rightComponent: (
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={setNotificationsEnabled}
+                            trackColor={{ false: '#374151', true: theme.primary }}
+                            thumbColor={notificationsEnabled ? '#fff' : '#9CA3AF'}
+                        />
+                    )
+                },
+                {
+                    icon: 'gps-fixed',
+                    title: 'Location Services',
+                    subtitle: 'GPS & location tracking',
+                    rightComponent: (
+                        <Switch
+                            value={locationEnabled}
+                            onValueChange={setLocationEnabled}
+                            trackColor={{ false: '#374151', true: theme.primary }}
+                            thumbColor={locationEnabled ? '#fff' : '#9CA3AF'}
+                        />
+                    )
+                },
+                {
+                    icon: 'language',
+                    title: 'Language',
+                    subtitle: 'English (US)',
+                    color: theme.primary,
+                    onPress: () => console.log('Language pressed')
+                },
+            ]
         },
         {
-            icon: 'location-on',
-            title: 'Delivery Addresses',
-            onPress: () => console.log('Addresses pressed')
-        },
-        {
-            icon: 'credit-card',
-            title: 'Payment Methods',
-            onPress: () => console.log('Payment pressed')
-        },
-        {
-            icon: 'notifications',
-            title: 'Notifications',
-            rightComponent: (
-                <Switch
-                    value={notificationsEnabled}
-                    onValueChange={setNotificationsEnabled}
-                    trackColor={{ false: theme.gray400, true: theme.primary }}
-                    thumbColor={notificationsEnabled ? '#fff' : theme.gray200}
-                />
-            )
-        },
-        {
-            icon: 'gps-fixed',
-            title: 'Location Services',
-            rightComponent: (
-                <Switch
-                    value={locationEnabled}
-                    onValueChange={setLocationEnabled}
-                    trackColor={{ false: theme.gray400, true: theme.primary }}
-                    thumbColor={locationEnabled ? '#fff' : theme.gray200}
-                />
-            )
-        },
-        {
-            icon: 'help-outline',
-            title: 'Help & Support',
-            onPress: () => console.log('Help pressed')
-        },
+            title: 'SUPPORT',
+            items: [
+                {
+                    icon: 'help-outline',
+                    title: 'Help & Support',
+                    subtitle: '24/7 customer service',
+                    color: theme.success,
+                    onPress: () => console.log('Help pressed')
+                },
+                {
+                    icon: 'description',
+                    title: 'Terms & Conditions',
+                    subtitle: 'Legal information',
+                    color: theme.textTertiary,
+                    onPress: () => console.log('Terms pressed')
+                },
+                {
+                    icon: 'shield',
+                    title: 'Privacy Policy',
+                    subtitle: 'Data protection',
+                    color: theme.textTertiary,
+                    onPress: () => console.log('Privacy pressed')
+                },
+            ]
+        }
     ];
 
-    const renderMenuItem = (item, index) => (
+    const QuickActionCard = ({ item }) => (
+        <TouchableOpacity style={[styles.quickActionCard, { backgroundColor: theme.surface }]} activeOpacity={0.7}>
+            <View style={[styles.quickActionIcon, { backgroundColor: `${item.color}20` }]}>
+                <Text style={styles.quickActionEmoji}>{item.icon}</Text>
+            </View>
+            <Text style={[styles.quickActionCount, { color: item.color }]}>{item.count}</Text>
+            <Text style={[styles.quickActionTitle, { color: theme.textSecondary }]}>{item.title}</Text>
+        </TouchableOpacity>
+    );
+
+    const MenuItem = ({ item }) => (
         <TouchableOpacity
-            key={index}
-            style={[styles.menuItem, { borderBottomColor: theme.border }]}
+            style={[styles.menuItem, { backgroundColor: theme.surface }]}
             onPress={item.onPress}
             activeOpacity={0.7}
         >
             <View style={styles.menuItemLeft}>
-                <View style={[styles.iconContainer, { backgroundColor: theme.surface }]}>
+                <View style={[styles.menuIcon, { backgroundColor: `${item.color || theme.primary}15` }]}>
                     <MaterialIcons
                         name={item.icon}
-                        size={20}
-                        color={theme.primary}
+                        size={22}
+                        color={item.color || theme.primary}
                     />
                 </View>
-                <ThemedText style={styles.menuItemText}>{item.title}</ThemedText>
+                <View style={styles.menuTextContainer}>
+                    <Text style={[styles.menuTitle, { color: theme.text }]}>{item.title}</Text>
+                    {item.subtitle && (
+                        <Text style={[styles.menuSubtitle, { color: theme.textSecondary }]}>{item.subtitle}</Text>
+                    )}
+                </View>
             </View>
-
             {item.rightComponent || (
                 <MaterialIcons
                     name="keyboard-arrow-right"
@@ -105,164 +201,211 @@ const ProfileScreen = () => {
         </TouchableOpacity>
     );
 
-    const dynamicStyles = StyleSheet.create({
-        avatar: {
-            width: 100,
-            height: 100,
-            borderRadius: 50,
-            borderWidth: 3,
-            borderColor: theme.primary,
-        },
-        editButton: {
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            width: 36,
-            height: 36,
-            borderRadius: 18,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 2,
-            borderColor: theme.background,
-        },
-        statsContainer: {
-            flexDirection: 'row',
-            backgroundColor: theme.surface,
-            borderRadius: 16,
-            padding: 16,
-            width: '100%',
-            justifyContent: 'space-around',
-            marginTop: 16,
-        },
-    });
-
     return (
-        <ThemedView style={styles.container}>
-            <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor="transparent" translucent />
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+            <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
-            {/* Header with back button and title */}
+            {/* Header */}
             <View style={styles.header}>
-                <ThemedText style={styles.headerTitle}>Profile</ThemedText>
-                <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
-                    <Feather name={isDark ? 'sun' : 'moon'} size={24} color={theme.primary} />
-                </TouchableOpacity>
+                <View style={styles.headerContent}>
+                    <Text style={[styles.headerTitle, { color: theme.text }]}>Profile</Text>
+                    <TouchableOpacity style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)' }]}>
+                        <MaterialIcons name="settings" size={22} color={theme.text} />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                {/* User Profile Section */}
-                <View style={styles.profileSection}>
-                    <View style={styles.avatarContainer}>
-                        <Image
-                            source={{ uri: user.avatar }}
-                            style={dynamicStyles.avatar}
-                            resizeMode="cover"
-                        />
-                        <TouchableOpacity style={[dynamicStyles.editButton, { backgroundColor: theme.primary }]}>
-                            <Ionicons name="pencil" size={16} color="#fff" />
-                        </TouchableOpacity>
-                    </View>
-
-                    <ThemedText style={styles.userName}>{user.name}</ThemedText>
-                    <ThemedText style={[styles.userEmail, { color: theme.textTertiary }]}>{user.email}</ThemedText>
-
-                    <View style={dynamicStyles.statsContainer}>
-                        <View style={styles.statItem}>
-                            <ThemedText style={styles.statValue}>{user.orders}</ThemedText>
-                            <ThemedText style={[styles.statLabel, { color: theme.textTertiary }]}>Orders</ThemedText>
+                {/* Profile Header Card */}
+                <View style={[styles.profileCard, { backgroundColor: theme.surface, borderColor: theme.cardBorder }]}>
+                    <View style={styles.profileHeader}>
+                        <View style={styles.avatarContainer}>
+                            <Image
+                                source={{ uri: user.avatar }}
+                                style={[styles.avatar, { borderColor: theme.primary }]}
+                                resizeMode="cover"
+                            />
+                            <TouchableOpacity style={[styles.editBadge, { backgroundColor: theme.accent }]}>
+                                <Ionicons name="pencil" size={14} color="#fff" />
+                            </TouchableOpacity>
                         </View>
-                        <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-                        <View style={styles.statItem}>
-                            <ThemedText style={[styles.statValue, { color: theme.primary }]}>{user.points}</ThemedText>
-                            <ThemedText style={[styles.statLabel, { color: theme.textTertiary }]}>Points</ThemedText>
+
+                        <View style={styles.profileInfo}>
+                            <View style={styles.nameContainer}>
+                                <Text style={[styles.userName, { color: theme.text }]}>{user.name}</Text>
+                                <View style={[styles.levelBadge, { backgroundColor: `${theme.accent}20` }]}>
+                                    <Text style={[styles.levelText, { color: theme.accent }]}>{user.level}</Text>
+                                </View>
+                            </View>
+                            <Text style={[styles.userEmail, { color: theme.textSecondary }]}>{user.email}</Text>
                         </View>
                     </View>
                 </View>
 
-                {/* Menu Items */}
-                <View style={[styles.menuContainer, { backgroundColor: theme.surface }]}>
-                    {menuItems.map((item, index) => renderMenuItem(item, index))}
-                </View>
+                {/* Menu Sections */}
+                {menuSections.map((section, sectionIndex) => (
+                    <View key={sectionIndex} style={styles.menuSection}>
+                        <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{section.title}</Text>
+                        <View style={styles.menuContainer}>
+                            {section.items.map((item, itemIndex) => (
+                                <MenuItem key={itemIndex} item={item} />
+                            ))}
+                        </View>
+                    </View>
+                ))}
 
                 {/* Sign Out Button */}
-                <ThemedButton
-                    title="Sign Out"
-                    onPress={() => console.log('Sign Out')}
-                    style={[styles.signOutButton, { backgroundColor: 'transparent' }]}
-                    textStyle={{ color: theme.error }}
-                    leftIcon={
-                        <MaterialCommunityIcons
-                            name="logout"
-                            size={20}
-                            color={theme.error}
-                            style={styles.signOutIcon}
-                        />
-                    }
-                />
+                <TouchableOpacity
+                    style={[styles.signOutButton, { backgroundColor: theme.surface }]}
+                    onPress={() => router.replace('/auth/signIn')}
+                    activeOpacity={0.7}
+                >
+                    <MaterialCommunityIcons
+                        name="logout"
+                        size={20}
+                        color={theme.error}
+                        style={styles.signOutIcon}
+                    />
+                    <Text style={[styles.signOutText, { color: theme.error }]}>Sign Out</Text>
+                </TouchableOpacity>
+
+                {/* Bottom spacing for navigation */}
+                <View style={styles.bottomSpacing} />
             </ScrollView>
-        </ThemedView>
+        </View>
     );
 };
-
-export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     header: {
+        paddingTop: 60,
+        paddingBottom: 20,
+        paddingHorizontal: 24,
+    },
+    headerContent: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        paddingTop: 60,
-        paddingBottom: 20,
     },
     headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 32,
+        fontWeight: '700',
+        letterSpacing: -0.5,
     },
-    themeToggle: {
-        padding: 8,
-        borderRadius: 20,
-        backgroundColor: 'rgba(0,0,0,0.05)',
+    settingsButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     scrollView: {
         flex: 1,
     },
-    profileSection: {
+    profileCard: {
+        marginHorizontal: 24,
+        marginBottom: 24,
+        borderRadius: 24,
+        padding: 24,
+        borderWidth: 1,
+    },
+    profileHeader: {
+        flexDirection: 'row',
         alignItems: 'center',
-        padding: 20,
+        marginBottom: 24,
     },
     avatarContainer: {
         position: 'relative',
-        marginBottom: 16,
+        marginRight: 20,
     },
-    userName: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginTop: 8,
+    avatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        borderWidth: 3,
     },
-    userEmail: {
-        fontSize: 14,
-        marginBottom: 16,
-    },
-    statItem: {
+    editBadge: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    statValue: {
-        fontSize: 20,
-        fontWeight: 'bold',
+    profileInfo: {
+        flex: 1,
+    },
+    nameContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 4,
     },
-    statLabel: {
-        fontSize: 14,
+    userName: {
+        fontSize: 24,
+        fontWeight: '700',
+        marginRight: 12,
     },
-    statDivider: {
-        width: 1,
-        height: '100%',
+    levelBadge: {
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    levelText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    userEmail: {
+        fontSize: 16,
+    },
+    quickActions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    quickActionCard: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 16,
+        paddingHorizontal: 8,
+        borderRadius: 16,
+        marginHorizontal: 4,
+    },
+    quickActionIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    quickActionEmoji: {
+        fontSize: 24,
+    },
+    quickActionCount: {
+        fontSize: 20,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    quickActionTitle: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    menuSection: {
+        marginBottom: 24,
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        letterSpacing: 1,
+        marginLeft: 24,
+        marginBottom: 12,
     },
     menuContainer: {
-        margin: 20,
+        marginHorizontal: 24,
         borderRadius: 16,
         overflow: 'hidden',
     },
@@ -270,31 +413,53 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingVertical: 16,
         paddingHorizontal: 20,
-        borderBottomWidth: 1,
+        paddingVertical: 16,
+        marginBottom: 2,
     },
     menuItemLeft: {
         flexDirection: 'row',
         alignItems: 'center',
+        flex: 1,
     },
-    iconContainer: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
+    menuIcon: {
+        width: 44,
+        height: 44,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
     },
-    menuItemText: {
+    menuTextContainer: {
+        flex: 1,
+    },
+    menuTitle: {
         fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 2,
+    },
+    menuSubtitle: {
+        fontSize: 14,
     },
     signOutButton: {
-        marginHorizontal: 20,
-        marginBottom: 40,
-        borderColor: 'transparent',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 24,
+        paddingVertical: 16,
+        borderRadius: 16,
+        marginBottom: 20,
     },
     signOutIcon: {
         marginRight: 8,
     },
+    signOutText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    bottomSpacing: {
+        height: 100,
+    },
 });
+
+export default ProfileScreen;
