@@ -7,7 +7,7 @@ import { Image, ScrollView, StatusBar, StyleSheet, Switch, Text, TouchableOpacit
 const theme = {
     background: '#0A0A0B',
     surface: '#1C1C1E',
-    surfaceElevated: '#2C2C2E',
+    surfaaceElevated: '#2C2C2E',
     primary: '#6366F1',
     primaryLight: '#818CF8',
     accent: '#F59E0B',

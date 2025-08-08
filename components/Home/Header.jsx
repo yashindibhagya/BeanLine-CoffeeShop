@@ -1,13 +1,18 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useCart } from '../../app/context/CartContext';
 
 const LocationDropdown = () => {
     const [visible, setVisible] = useState(false);
     const router = useRouter();
+    const { cartItems } = useCart();
+    
+    // Calculate total items in cart
+    const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     const openMenu = () => setVisible(true);
     const closeMenu = () => setVisible(false);
@@ -41,7 +46,19 @@ const LocationDropdown = () => {
                 </Menu>
 
 
-                <MaterialIcons name="delivery-dining" size={30} color="white" />
+                <TouchableOpacity 
+                    style={styles.cartIconContainer}
+                    onPress={() => router.push('/cartScreen')}
+                >
+                    <MaterialIcons name="delivery-dining" size={30} color="white" />
+                    {totalItems > 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>
+                                {totalItems > 9 ? '9+' : totalItems}
+                            </Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
 
             </View>
         </Provider>
@@ -50,11 +67,31 @@ const LocationDropdown = () => {
 
 const styles = StyleSheet.create({
     container: {
-        //padding: 24,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        position: 'relative',
         paddingTop: 40
+    },
+    cartIconContainer: {
+        position: 'relative',
+        marginLeft: 10,
+    },
+    badge: {
+        position: 'absolute',
+        right: -6,
+        top: -3,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
     button: {
         flexDirection: 'row',
