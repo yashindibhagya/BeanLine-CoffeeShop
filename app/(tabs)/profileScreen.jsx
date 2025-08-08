@@ -3,93 +3,92 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, ScrollView, StatusBar, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
-// Modern theme colors
+// Coffee shop theme with black background and coffee-inspired orange
 const theme = {
-    background: '#0A0A0B',
-    surface: '#1C1C1E',
-    surfaaceElevated: '#2C2C2E',
-    primary: '#6366F1',
-    primaryLight: '#818CF8',
-    accent: '#F59E0B',
-    success: '#10B981',
-    error: '#EF4444',
+    background: '#000000',
+    surface: '#111111',
+    surfaceElevated: '#1A1A1A',
+    surfaceHover: '#222222',
+    primary: '#D2691E', // Coffee brown-orange
+    primaryLight: '#FF8C42',
+    primaryDark: '#8B4513',
+    accent: '#FF7F00', // Bright coffee orange
+    success: '#228B22',
+    error: '#DC143C',
+    warning: '#FFD700',
     text: '#FFFFFF',
-    textSecondary: '#A1A1AA',
-    textTertiary: '#71717A',
-    border: '#27272A',
-    cardBorder: '#374151',
+    textSecondary: '#E5E5E5',
+    textTertiary: '#CCCCCC',
+    border: '#333333',
+    cardBorder: '#2A2A2A',
+    divider: '#1E1E1E',
+    coffee: '#8B4513',
 };
 
 const ProfileScreen = () => {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [locationEnabled, setLocationEnabled] = useState(true);
-    const [darkMode, setDarkMode] = useState(true);
+    const [orderReminders, setOrderReminders] = useState(true);
     const router = useRouter();
 
-    // Mock user data
+    // Coffee shop customer data
     const user = {
-        name: 'Alex Morgan',
-        email: 'alex.morgan@example.com',
-        avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-        level: 'Gold Member',
+        name: 'Sarah Chen',
+        email: 'sarah.chen@email.com',
+        avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+        memberLevel: 'Gold Bean',
+        joinDate: 'Brewing since Jan 2023',
+        loyaltyPoints: 847,
+        nextRewardAt: 1000,
     };
+
+    const coffeeStats = [
+        { icon: '☕', title: 'Orders', count: '156', color: theme.primary, subtitle: 'Total orders' },
+        { icon: '❤️', title: 'Favorites', count: '8', color: theme.error, subtitle: 'Saved drinks' },
+    ];
 
     const menuSections = [
         {
-            title: 'ACCOUNT',
+            title: 'MY COFFEE',
             items: [
                 {
-                    icon: 'person-outline',
-                    title: 'Personal Information',
-                    subtitle: 'Manage your profile',
-                    color: theme.primary,
-                    onPress: () => console.log('Personal Info pressed')
-                },
-                {
-                    icon: 'security',
-                    title: 'Privacy & Security',
-                    subtitle: 'Control your data',
-                    color: theme.success,
-                    onPress: () => console.log('Security pressed')
-                },
-                {
-                    icon: 'palette',
-                    title: 'Appearance',
-                    subtitle: 'Theme preferences',
-                    color: theme.accent,
-                    rightComponent: (
-                        <Switch
-                            value={darkMode}
-                            onValueChange={setDarkMode}
-                            trackColor={{ false: '#374151', true: theme.primary }}
-                            thumbColor={darkMode ? '#fff' : '#9CA3AF'}
-                        />
-                    )
-                },
-            ]
-        },
-        {
-            title: 'SERVICES',
-            items: [
-                {
-                    icon: 'favorite-border',
-                    title: 'Favorites',
-                    subtitle: 'Your saved items',
+                    icon: 'local-cafe',
+                    title: 'My Favorites',
+                    subtitle: '8 saved drinks & snacks',
                     color: theme.error,
                     onPress: () => console.log('Favorites pressed')
                 },
                 {
+                    icon: 'history',
+                    title: 'Order History',
+                    subtitle: '156 previous orders',
+                    color: theme.primary,
+                    onPress: () => console.log('History pressed')
+                },
+            ]
+        },
+        {
+            title: 'ACCOUNT & DELIVERY',
+            items: [
+                {
+                    icon: 'person-outline',
+                    title: 'Personal Information',
+                    subtitle: 'Name, email, preferences',
+                    color: theme.primary,
+                    onPress: () => console.log('Personal Info pressed')
+                },
+                {
                     icon: 'location-on',
                     title: 'Delivery Addresses',
-                    subtitle: '3 saved locations',
+                    subtitle: 'Home, Office + 2 more',
                     color: theme.success,
                     onPress: () => console.log('Addresses pressed')
                 },
                 {
                     icon: 'credit-card',
                     title: 'Payment Methods',
-                    subtitle: 'Cards & wallets',
-                    color: theme.accent,
+                    subtitle: '2 cards, Apple Pay',
+                    color: theme.warning,
                     onPress: () => console.log('Payment pressed')
                 },
             ]
@@ -99,85 +98,91 @@ const ProfileScreen = () => {
             items: [
                 {
                     icon: 'notifications',
-                    title: 'Notifications',
-                    subtitle: 'Push & email alerts',
+                    title: 'Order Updates',
+                    subtitle: 'Ready, pickup reminders',
+                    color: theme.primary,
                     rightComponent: (
                         <Switch
                             value={notificationsEnabled}
                             onValueChange={setNotificationsEnabled}
-                            trackColor={{ false: '#374151', true: theme.primary }}
-                            thumbColor={notificationsEnabled ? '#fff' : '#9CA3AF'}
+                            trackColor={{ false: '#444444', true: theme.primary }}
+                            thumbColor={notificationsEnabled ? '#fff' : '#999999'}
+                            ios_backgroundColor="#444444"
+                        />
+                    )
+                },
+                {
+                    icon: 'alarm',
+                    title: 'Daily Reminders',
+                    subtitle: 'Morning coffee alerts',
+                    color: theme.accent,
+                    rightComponent: (
+                        <Switch
+                            value={orderReminders}
+                            onValueChange={setOrderReminders}
+                            trackColor={{ false: '#444444', true: theme.primary }}
+                            thumbColor={orderReminders ? '#fff' : '#999999'}
+                            ios_backgroundColor="#444444"
                         />
                     )
                 },
                 {
                     icon: 'gps-fixed',
                     title: 'Location Services',
-                    subtitle: 'GPS & location tracking',
+                    subtitle: 'Find nearest stores',
+                    color: theme.success,
                     rightComponent: (
                         <Switch
                             value={locationEnabled}
                             onValueChange={setLocationEnabled}
-                            trackColor={{ false: '#374151', true: theme.primary }}
-                            thumbColor={locationEnabled ? '#fff' : '#9CA3AF'}
+                            trackColor={{ false: '#444444', true: theme.primary }}
+                            thumbColor={locationEnabled ? '#fff' : '#999999'}
+                            ios_backgroundColor="#444444"
                         />
                     )
-                },
-                {
-                    icon: 'language',
-                    title: 'Language',
-                    subtitle: 'English (US)',
-                    color: theme.primary,
-                    onPress: () => console.log('Language pressed')
                 },
             ]
         },
         {
-            title: 'SUPPORT',
+            title: 'SUPPORT & MORE',
             items: [
                 {
                     icon: 'help-outline',
                     title: 'Help & Support',
-                    subtitle: '24/7 customer service',
-                    color: theme.success,
+                    subtitle: 'FAQ, contact us',
+                    color: theme.primary,
                     onPress: () => console.log('Help pressed')
-                },
-                {
-                    icon: 'description',
-                    title: 'Terms & Conditions',
-                    subtitle: 'Legal information',
-                    color: theme.textTertiary,
-                    onPress: () => console.log('Terms pressed')
-                },
-                {
-                    icon: 'shield',
-                    title: 'Privacy Policy',
-                    subtitle: 'Data protection',
-                    color: theme.textTertiary,
-                    onPress: () => console.log('Privacy pressed')
                 },
             ]
         }
     ];
 
-    const QuickActionCard = ({ item }) => (
-        <TouchableOpacity style={[styles.quickActionCard, { backgroundColor: theme.surface }]} activeOpacity={0.7}>
-            <View style={[styles.quickActionIcon, { backgroundColor: `${item.color}20` }]}>
-                <Text style={styles.quickActionEmoji}>{item.icon}</Text>
+    const CoffeeStatCard = ({ item }) => (
+        <TouchableOpacity
+            style={[styles.coffeeStatCard, { backgroundColor: theme.surface, borderColor: theme.border }]}
+            activeOpacity={0.8}
+        >
+            <View style={[styles.coffeeStatIcon, { backgroundColor: `${item.color}25` }]}>
+                <Text style={styles.coffeeStatEmoji}>{item.icon}</Text>
             </View>
-            <Text style={[styles.quickActionCount, { color: item.color }]}>{item.count}</Text>
-            <Text style={[styles.quickActionTitle, { color: theme.textSecondary }]}>{item.title}</Text>
+            <Text style={[styles.coffeeStatCount, { color: item.color }]}>{item.count}</Text>
+            <Text style={[styles.coffeeStatTitle, { color: theme.textSecondary }]}>{item.title}</Text>
+            <Text style={[styles.coffeeStatSubtitle, { color: theme.textTertiary }]}>{item.subtitle}</Text>
         </TouchableOpacity>
     );
 
-    const MenuItem = ({ item }) => (
+    const MenuItem = ({ item, isLast = false }) => (
         <TouchableOpacity
-            style={[styles.menuItem, { backgroundColor: theme.surface }]}
+            style={[
+                styles.menuItem,
+                { backgroundColor: theme.surface },
+                !isLast && { borderBottomWidth: 1, borderBottomColor: theme.divider }
+            ]}
             onPress={item.onPress}
             activeOpacity={0.7}
         >
             <View style={styles.menuItemLeft}>
-                <View style={[styles.menuIcon, { backgroundColor: `${item.color || theme.primary}15` }]}>
+                <View style={[styles.menuIcon, { backgroundColor: `${item.color || theme.primary}20` }]}>
                     <MaterialIcons
                         name={item.icon}
                         size={22}
@@ -208,9 +213,15 @@ const ProfileScreen = () => {
             {/* Header */}
             <View style={styles.header}>
                 <View style={styles.headerContent}>
-                    <Text style={[styles.headerTitle, { color: theme.text }]}>Profile</Text>
-                    <TouchableOpacity style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)' }]}>
-                        <MaterialIcons name="settings" size={22} color={theme.text} />
+                    <View>
+                        <Text style={[styles.headerTitle, { color: theme.text }]}>My Profile</Text>
+                        <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>Brew-tiful day for coffee!</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={[styles.settingsButton, { backgroundColor: theme.surface, borderColor: theme.border }]}
+                        activeOpacity={0.7}
+                    >
+                        <MaterialIcons name="settings" size={22} color={theme.primary} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -225,7 +236,10 @@ const ProfileScreen = () => {
                                 style={[styles.avatar, { borderColor: theme.primary }]}
                                 resizeMode="cover"
                             />
-                            <TouchableOpacity style={[styles.editBadge, { backgroundColor: theme.accent }]}>
+                            <TouchableOpacity
+                                style={[styles.editBadge, { backgroundColor: theme.primary }]}
+                                activeOpacity={0.8}
+                            >
                                 <Ionicons name="pencil" size={14} color="#fff" />
                             </TouchableOpacity>
                         </View>
@@ -233,12 +247,22 @@ const ProfileScreen = () => {
                         <View style={styles.profileInfo}>
                             <View style={styles.nameContainer}>
                                 <Text style={[styles.userName, { color: theme.text }]}>{user.name}</Text>
-                                <View style={[styles.levelBadge, { backgroundColor: `${theme.accent}20` }]}>
-                                    <Text style={[styles.levelText, { color: theme.accent }]}>{user.level}</Text>
+                                <View style={[styles.memberBadge, { backgroundColor: `${theme.accent}25` }]}>
+                                    <MaterialIcons name="local-cafe" size={14} color={theme.accent} />
+                                    <Text style={[styles.memberText, { color: theme.accent }]}>{user.memberLevel}</Text>
                                 </View>
                             </View>
                             <Text style={[styles.userEmail, { color: theme.textSecondary }]}>{user.email}</Text>
+                            <Text style={[styles.joinDate, { color: theme.textTertiary }]}>{user.joinDate}</Text>
+
                         </View>
+                    </View>
+
+                    {/* Coffee Stats */}
+                    <View style={styles.coffeeStats}>
+                        {coffeeStats.map((item, index) => (
+                            <CoffeeStatCard key={index} item={item} />
+                        ))}
                     </View>
                 </View>
 
@@ -246,28 +270,44 @@ const ProfileScreen = () => {
                 {menuSections.map((section, sectionIndex) => (
                     <View key={sectionIndex} style={styles.menuSection}>
                         <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{section.title}</Text>
-                        <View style={styles.menuContainer}>
+                        <View style={[styles.menuContainer, { backgroundColor: theme.surface, borderColor: theme.cardBorder }]}>
                             {section.items.map((item, itemIndex) => (
-                                <MenuItem key={itemIndex} item={item} />
+                                <MenuItem
+                                    key={itemIndex}
+                                    item={item}
+                                    isLast={itemIndex === section.items.length - 1}
+                                />
                             ))}
                         </View>
                     </View>
                 ))}
 
-                {/* Sign Out Button */}
-                <TouchableOpacity
-                    style={[styles.signOutButton, { backgroundColor: theme.surface }]}
-                    onPress={() => router.replace('/auth/signIn')}
-                    activeOpacity={0.7}
-                >
-                    <MaterialCommunityIcons
-                        name="logout"
-                        size={20}
-                        color={theme.error}
-                        style={styles.signOutIcon}
-                    />
-                    <Text style={[styles.signOutText, { color: theme.error }]}>Sign Out</Text>
-                </TouchableOpacity>
+                {/* Action Buttons */}
+                <View style={styles.actionButtons}>
+                    {/* Quick Order Button */}
+                    <TouchableOpacity
+                        style={[styles.quickOrderButton, { backgroundColor: theme.primary }]}
+                        activeOpacity={0.8}
+                    >
+                        <MaterialIcons name="local-cafe" size={20} color="#fff" />
+                        <Text style={[styles.quickOrderText, { color: '#fff' }]}>Order My Usual</Text>
+                    </TouchableOpacity>
+
+                    {/* Sign Out Button */}
+                    <TouchableOpacity
+                        style={[styles.signOutButton, { backgroundColor: theme.surface, borderColor: theme.error }]}
+                        onPress={() => router.replace('/auth/signIn')}
+                        activeOpacity={0.7}
+                    >
+                        <MaterialCommunityIcons
+                            name="logout"
+                            size={20}
+                            color={theme.error}
+                            style={styles.signOutIcon}
+                        />
+                        <Text style={[styles.signOutText, { color: theme.error }]}>Sign Out</Text>
+                    </TouchableOpacity>
+                </View>
 
                 {/* Bottom spacing for navigation */}
                 <View style={styles.bottomSpacing} />
@@ -281,9 +321,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingTop: 60,
-        paddingBottom: 20,
-        paddingHorizontal: 24,
+        paddingTop: 50,
+        paddingBottom: 16,
+        paddingHorizontal: 20,
     },
     headerContent: {
         flexDirection: 'row',
@@ -291,51 +331,66 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerTitle: {
-        fontSize: 32,
-        fontWeight: '700',
+        fontSize: 28,
+        fontWeight: '800',
         letterSpacing: -0.5,
     },
+    headerSubtitle: {
+        fontSize: 14,
+        marginTop: 2,
+    },
     settingsButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
     },
     scrollView: {
         flex: 1,
     },
     profileCard: {
-        marginHorizontal: 24,
-        marginBottom: 24,
-        borderRadius: 24,
-        padding: 24,
+        marginHorizontal: 16,
+        marginBottom: 20,
+        borderRadius: 16,
+        padding: 20,
         borderWidth: 1,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     profileHeader: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 24,
+        alignItems: 'flex-start',
+        marginBottom: 16,
     },
     avatarContainer: {
         position: 'relative',
-        marginRight: 20,
+        marginRight: 16,
     },
     avatar: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 3,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        borderWidth: 2,
     },
     editBadge: {
         position: 'absolute',
         bottom: 0,
         right: 0,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
     },
     profileInfo: {
         flex: 1,
@@ -344,78 +399,120 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 4,
+        flexWrap: 'wrap',
     },
     userName: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: '700',
-        marginRight: 12,
+        marginRight: 8,
     },
-    levelBadge: {
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 12,
+    memberBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 10,
     },
-    levelText: {
+    memberText: {
         fontSize: 12,
-        fontWeight: '600',
+        fontWeight: '700',
+        marginLeft: 4,
     },
     userEmail: {
-        fontSize: 16,
+        fontSize: 14,
+        marginBottom: 2,
     },
-    quickActions: {
+    joinDate: {
+        fontSize: 12,
+        marginBottom: 8,
+    },
+    loyaltyContainer: {
+        marginTop: 8,
+    },
+    loyaltyHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-    },
-    quickActionCard: {
-        flex: 1,
-        alignItems: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 8,
-        borderRadius: 16,
-        marginHorizontal: 4,
-    },
-    quickActionIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 8,
     },
-    quickActionEmoji: {
-        fontSize: 24,
-    },
-    quickActionCount: {
-        fontSize: 20,
-        fontWeight: '700',
-        marginBottom: 2,
-    },
-    quickActionTitle: {
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    menuSection: {
-        marginBottom: 24,
-    },
-    sectionTitle: {
+    loyaltyText: {
         fontSize: 14,
         fontWeight: '600',
+    },
+    loyaltyPoints: {
+        fontSize: 14,
+        fontWeight: '700',
+    },
+    progressBar: {
+        height: 6,
+        borderRadius: 3,
+        overflow: 'hidden',
+    },
+    progressFill: {
+        height: '100%',
+        borderRadius: 3,
+    },
+    coffeeStats: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 4,
+    },
+    coffeeStatCard: {
+        flex: 1,
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 4,
+        borderRadius: 12,
+        marginHorizontal: 2,
+        borderWidth: 1,
+    },
+    coffeeStatIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 6,
+    },
+    coffeeStatEmoji: {
+        fontSize: 16,
+    },
+    coffeeStatCount: {
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 1,
+    },
+    coffeeStatTitle: {
+        fontSize: 10,
+        fontWeight: '600',
+        marginBottom: 1,
+    },
+    coffeeStatSubtitle: {
+        fontSize: 8,
+        textAlign: 'center',
+    },
+    menuSection: {
+        marginBottom: 18,
+    },
+    sectionTitle: {
+        fontSize: 12,
+        fontWeight: '700',
         letterSpacing: 1,
-        marginLeft: 24,
-        marginBottom: 12,
+        marginLeft: 20,
+        marginBottom: 8,
     },
     menuContainer: {
-        marginHorizontal: 24,
-        borderRadius: 16,
+        marginHorizontal: 16,
+        borderRadius: 14,
         overflow: 'hidden',
+        borderWidth: 1,
     },
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        marginBottom: 2,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
     },
     menuItemLeft: {
         flexDirection: 'row',
@@ -423,42 +520,63 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     menuIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
+        width: 36,
+        height: 36,
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 16,
+        marginRight: 12,
     },
     menuTextContainer: {
         flex: 1,
     },
     menuTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '600',
-        marginBottom: 2,
+        marginBottom: 1,
     },
     menuSubtitle: {
-        fontSize: 14,
+        fontSize: 13,
+    },
+    actionButtons: {
+        marginHorizontal: 16,
+        marginBottom: 16,
+        gap: 10,
+    },
+    quickOrderButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 16,
+        borderRadius: 16,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    },
+    quickOrderText: {
+        fontSize: 16,
+        fontWeight: '700',
+        marginLeft: 8,
     },
     signOutButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: 24,
-        paddingVertical: 16,
-        borderRadius: 16,
-        marginBottom: 20,
+        paddingVertical: 14,
+        borderRadius: 14,
+        borderWidth: 1,
     },
     signOutIcon: {
-        marginRight: 8,
+        marginRight: 6,
     },
     signOutText: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '600',
     },
     bottomSpacing: {
-        height: 100,
+        height: 80,
     },
 });
 

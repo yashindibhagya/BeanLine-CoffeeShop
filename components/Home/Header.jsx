@@ -1,6 +1,6 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +10,7 @@ const LocationDropdown = () => {
     const [visible, setVisible] = useState(false);
     const router = useRouter();
     const { cartItems } = useCart();
-    
+
     // Calculate total items in cart
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -26,7 +26,7 @@ const LocationDropdown = () => {
         <Provider>
             <View style={styles.container}>
                 <Image
-                    source={{ uri: 'https://www.freepik.com/free-photo/confident-handsome-guy-posing-against-white-wall_11103978.htm#fromView=search&page=1&position=27&uuid=dfb99dca-17fe-4f79-ba69-1852aeffc5ab&query=person ' }}
+                    source={{ uri: 'https://randomuser.me/api/portraits/women/44.jpg' }}
                     style={styles.image}
                 >
                 </Image>
@@ -46,7 +46,7 @@ const LocationDropdown = () => {
                 </Menu>
 
 
-                <TouchableOpacity 
+                <TouchableOpacity
                     style={styles.cartIconContainer}
                     onPress={() => router.push('/cartScreen')}
                 >

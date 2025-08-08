@@ -71,10 +71,11 @@ const HomeScreen = () => {
     // Add your add to cart logic here
   };
 
-  // Get items for selected category
+  // Get items for selected category or search results
   const selectedCategoryItems = useMemo(() => {
     if (searchQuery.trim()) {
-      return searchItems(searchQuery, selectedCategory);
+      // Search across all categories when there's a search query
+      return searchItems(searchQuery);
     }
     return getItemsByCategory(selectedCategory);
   }, [selectedCategory, searchQuery]);

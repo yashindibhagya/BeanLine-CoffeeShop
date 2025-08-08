@@ -301,6 +301,7 @@ const styles = StyleSheet.create({
     categoriesList: {
         paddingHorizontal: 12,
         flexGrow: 1,
+        gap: 5
     },
     categoryButton: {
         height: 70,
